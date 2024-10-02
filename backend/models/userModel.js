@@ -18,13 +18,13 @@ async getUserByUsername(username) {
 }
 
 
-    async createUser(username, password, roleId) {
+    async createUser(username, email, password, roleId, avatar) {
         const hashedPassword = await bcrypt.hash(password, 10);
-        const [result] = await this.pool.execute('INSERT INTO users (username, password, role_id) VALUES (?, ?, ?)', [username, hashedPassword, roleId]);
+        const [result] = await this.pool.execute('INSERT INTO users (username, email, password, role_id, avatar) VALUES (?, ?, ?, ?, ?)', [username, email, hashedPassword, roleId, avatar]);
         return result.insertId;
     }
 
-async updateUser(id, username, password, roleId) {
+async updateUser(id, username, email, roleId) {
     // Check if the new username already exists for another user
     const [existingUser] = await this.pool.execute(
         'SELECT id FROM users WHERE username = ? AND id != ?',
@@ -37,10 +37,10 @@ async updateUser(id, username, password, roleId) {
     }
 
     // Proceed with the update if the username is unique
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // const hashedPassword = await bcrypt.hash(password, 10);
     const [result] = await this.pool.execute(
-        'UPDATE users SET username = ?, password = ?, role_id = ? WHERE id = ?',
-        [username, hashedPassword, roleId, id]
+        'UPDATE users SET username = ?, email = ?, role_id = ? WHERE id = ?',
+        [username, email, roleId, id]
     );
     return { affectedRows: result.affectedRows }; // Return the number of affected rows
 }
@@ -48,12 +48,12 @@ async updateUser(id, username, password, roleId) {
 
 
     async getUserById(id) {
-        const [rows] = await this.pool.execute('SELECT id, username, role_id FROM users WHERE id = ?', [id]);
+        const [rows] = await this.pool.execute('SELECT id, username, role_id, email FROM users WHERE id = ?', [id]);
         return rows[0];
     }
 
     async getAllUsers() {
-        const [rows] = await this.pool.execute('SELECT id, username, role_id FROM users');
+        const [rows] = await this.pool.execute('SELECT id, username, role_id, email, created_at, avatar FROM users');
         return rows;
     }
 

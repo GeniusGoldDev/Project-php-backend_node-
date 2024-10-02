@@ -1,15 +1,56 @@
+<?php
+session_start(); // Start the session
+
+// Check if the token is set
+if (!isset($_SESSION['token'])) {
+    die("No token provided. Please log in.");
+}
+
+// Fetch data from the backend using cURL
+$token = $_SESSION['token'];
+$ch = curl_init('http://localhost:3000/users'); // Replace with your actual users endpoint
+
+// Set the headers
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'Authorization: Bearer ' . $token, // Include your token here
+    'Content-Type: application/json'
+]);
+
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+$response = curl_exec($ch);
+
+// Check for cURL errors
+if (curl_errno($ch)) {
+    echo 'Curl error: ' . curl_error($ch);
+    curl_close($ch);
+    exit;
+}
+
+curl_close($ch);
+
+// Decode JSON response into an associative array
+$users = json_decode($response, true);
+
+// Check if decoding was successful
+if (json_last_error() !== JSON_ERROR_NONE) {
+    die('Error decoding JSON: ' . json_last_error_msg());
+}
+
+// Debug output to inspect the structure of $users
+// echo '<pre>';
+// print_r($users);
+// echo '</pre>';
+// exit; // Stop execution for debugging
+
+?>
+
+
+
+<!-- Display users or handle empty response -->
+
 <!DOCTYPE html>
-<!--
-Author: Keenthemes
-Product Name: MetronicProduct Version: 8.2.7
-Purchase: https://1.envato.market/EA4JP
-Website: http://www.keenthemes.com
-Contact: support@keenthemes.com
-Follow: www.twitter.com/keenthemes
-Dribbble: www.dribbble.com/keenthemes
-Like: www.facebook.com/keenthemes
-License: For each use you must have a valid license purchased only from above link in order to legally use the theme for your project.
--->
+
 <html lang="en">
 	<!--begin::Head-->
 	<head>
@@ -22,12 +63,9 @@ License: For each use you must have a valid license purchased only from above li
 		<meta property="og:locale" content="en_US" />
 		<meta property="og:type" content="article" />
 		<meta property="og:title" content="Metronic - The World's #1 Selling Tailwind CSS & Bootstrap Admin Template by KeenThemes" />
-		<meta property="og:url" content="https://keenthemes.com/metronic" />
 		<meta property="og:site_name" content="Metronic by Keenthemes" />
-		<link rel="canonical" href="http://preview.keenthemes.comapps/user-management/users/list.html" />
 		<link rel="shortcut icon" href="assets/media/logos/favicon.ico" />
 		<!--begin::Fonts(mandatory for all pages)-->
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
 		<!--end::Fonts-->
 		<!--begin::Vendor Stylesheets(used for this page only)-->
 		<link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
@@ -5478,7 +5516,7 @@ License: For each use you must have a valid license purchased only from above li
 																						<span class="path2"></span>
 																					</i>
 																					<!--begin::Inputs-->
-																					<input type="file" name="avatar" accept=".png, .jpg, .jpeg" />
+																					<input id="avatar" type="file" name="avatar" accept=".png, .jpg, .jpeg" />
 																					<input type="hidden" name="avatar_remove" />
 																					<!--end::Inputs-->
 																				</label>
@@ -5512,7 +5550,7 @@ License: For each use you must have a valid license purchased only from above li
 																			<label class="required fw-semibold fs-6 mb-2">Full Name</label>
 																			<!--end::Label-->
 																			<!--begin::Input-->
-																			<input type="text" name="user_name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Full name" value="Emma Smith" />
+																			<input id="username" type="text" name="user_name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Full name" value="Emma Smith" />
 																			<!--end::Input-->
 																		</div>
 																		<!--end::Input group-->
@@ -5522,7 +5560,17 @@ License: For each use you must have a valid license purchased only from above li
 																			<label class="required fw-semibold fs-6 mb-2">Email</label>
 																			<!--end::Label-->
 																			<!--begin::Input-->
-																			<input type="email" name="user_email" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="example@domain.com" value="smith@kpmg.com" />
+																			<input id="email" type="email" name="email" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="example@domain.com" value="smith@kpmg.com" />
+																			<!--end::Input-->
+																		</div>
+																		<!--end::Input group-->
+																		<!--begin::Input group-->
+																		<div class="fv-row mb-7">
+																			<!--begin::Label-->
+																			<label class="required fw-semibold fs-6 mb-2">Password</label>
+																			<!--end::Label-->
+																			<!--begin::Input-->
+																			<input id="password" type="password" name="password" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="" value="" />
 																			<!--end::Input-->
 																		</div>
 																		<!--end::Input group-->
@@ -5537,7 +5585,7 @@ License: For each use you must have a valid license purchased only from above li
 																				<!--begin::Radio-->
 																				<div class="form-check form-check-custom form-check-solid">
 																					<!--begin::Input-->
-																					<input class="form-check-input me-3" name="user_role" type="radio" value="0" id="kt_modal_update_role_option_0" checked='checked' />
+																					<input class="form-check-input me-3" name="user_role" type="radio" value="1" id="kt_modal_update_role_option_0" checked='checked' />
 																					<!--end::Input-->
 																					<!--begin::Label-->
 																					<label class="form-check-label" for="kt_modal_update_role_option_0">
@@ -5555,66 +5603,12 @@ License: For each use you must have a valid license purchased only from above li
 																				<!--begin::Radio-->
 																				<div class="form-check form-check-custom form-check-solid">
 																					<!--begin::Input-->
-																					<input class="form-check-input me-3" name="user_role" type="radio" value="1" id="kt_modal_update_role_option_1" />
+																					<input class="form-check-input me-3" name="user_role" type="radio" value="2" id="kt_modal_update_role_option_1" />
 																					<!--end::Input-->
 																					<!--begin::Label-->
 																					<label class="form-check-label" for="kt_modal_update_role_option_1">
 																						<div class="fw-bold text-gray-800">Developer</div>
 																						<div class="text-gray-600">Best for developers or people primarily using the API</div>
-																					</label>
-																					<!--end::Label-->
-																				</div>
-																				<!--end::Radio-->
-																			</div>
-																			<!--end::Input row-->
-																			<div class='separator separator-dashed my-5'></div>
-																			<!--begin::Input row-->
-																			<div class="d-flex fv-row">
-																				<!--begin::Radio-->
-																				<div class="form-check form-check-custom form-check-solid">
-																					<!--begin::Input-->
-																					<input class="form-check-input me-3" name="user_role" type="radio" value="2" id="kt_modal_update_role_option_2" />
-																					<!--end::Input-->
-																					<!--begin::Label-->
-																					<label class="form-check-label" for="kt_modal_update_role_option_2">
-																						<div class="fw-bold text-gray-800">Analyst</div>
-																						<div class="text-gray-600">Best for people who need full access to analytics data, but don't need to update business settings</div>
-																					</label>
-																					<!--end::Label-->
-																				</div>
-																				<!--end::Radio-->
-																			</div>
-																			<!--end::Input row-->
-																			<div class='separator separator-dashed my-5'></div>
-																			<!--begin::Input row-->
-																			<div class="d-flex fv-row">
-																				<!--begin::Radio-->
-																				<div class="form-check form-check-custom form-check-solid">
-																					<!--begin::Input-->
-																					<input class="form-check-input me-3" name="user_role" type="radio" value="3" id="kt_modal_update_role_option_3" />
-																					<!--end::Input-->
-																					<!--begin::Label-->
-																					<label class="form-check-label" for="kt_modal_update_role_option_3">
-																						<div class="fw-bold text-gray-800">Support</div>
-																						<div class="text-gray-600">Best for employees who regularly refund payments and respond to disputes</div>
-																					</label>
-																					<!--end::Label-->
-																				</div>
-																				<!--end::Radio-->
-																			</div>
-																			<!--end::Input row-->
-																			<div class='separator separator-dashed my-5'></div>
-																			<!--begin::Input row-->
-																			<div class="d-flex fv-row">
-																				<!--begin::Radio-->
-																				<div class="form-check form-check-custom form-check-solid">
-																					<!--begin::Input-->
-																					<input class="form-check-input me-3" name="user_role" type="radio" value="4" id="kt_modal_update_role_option_4" />
-																					<!--end::Input-->
-																					<!--begin::Label-->
-																					<label class="form-check-label" for="kt_modal_update_role_option_4">
-																						<div class="fw-bold text-gray-800">Trial</div>
-																						<div class="text-gray-600">Best for people who need to preview content data, but don't need to make any updates</div>
 																					</label>
 																					<!--end::Label-->
 																				</div>
@@ -5629,7 +5623,7 @@ License: For each use you must have a valid license purchased only from above li
 																	<!--begin::Actions-->
 																	<div class="text-center pt-10">
 																		<button type="reset" class="btn btn-light me-3" data-kt-users-modal-action="cancel">Discard</button>
-																		<button type="submit" class="btn btn-primary" data-kt-users-modal-action="submit">
+																		<button id="create_user_m" type="submit" class="btn btn-primary" data-kt-users-modal-action="submit">
 																			<span class="indicator-label">Submit</span>
 																			<span class="indicator-progress">Please wait... 
 																			<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
@@ -5646,6 +5640,172 @@ License: For each use you must have a valid license purchased only from above li
 													<!--end::Modal dialog-->
 												</div>
 												<!--end::Modal - Add task-->
+                                                <!--begin::Modal - Update user details-->
+                                                <div class="modal fade" id="kt_modal_update_details" tabindex="-1" aria-hidden="true">
+                                                    <!--begin::Modal dialog-->
+                                                    <div class="modal-dialog modal-dialog-centered mw-650px">
+                                                        <!--begin::Modal content-->
+                                                        <div class="modal-content">
+                                                            <!--begin::Form-->
+                                                            <form class="form" action="#" id="kt_modal_update_user_form">
+                                                                <!--begin::Modal header-->
+                                                                <div class="modal-header" id="kt_modal_update_user_header">
+                                                                    <!--begin::Modal title-->
+                                                                    <h2 class="fw-bold">Update User Details</h2>
+                                                                    <!--end::Modal title-->
+                                                                    <!--begin::Close-->
+                                                                    <div class="btn btn-icon btn-sm btn-active-icon-primary" data-kt-users-modal-action="close">
+                                                                        <i class="ki-duotone ki-cross fs-1">
+                                                                            <span class="path1"></span>
+                                                                            <span class="path2"></span>
+                                                                        </i>
+                                                                    </div>
+                                                                    <!--end::Close-->
+                                                                </div>
+                                                                <!--end::Modal header-->
+                                                                <!--begin::Modal body-->
+                                                                <div class="modal-body py-10 px-lg-17">
+                                                                    <!--begin::Scroll-->
+                                                                    <div class="d-flex flex-column scroll-y me-n7 pe-7" id="kt_modal_update_user_scroll" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_update_user_header" data-kt-scroll-wrappers="#kt_modal_update_user_scroll" data-kt-scroll-offset="300px">
+                                                                        <!--begin::User toggle-->
+                                                                        <div class="fw-bolder fs-3 rotate collapsible mb-7" data-bs-toggle="collapse" href="#kt_modal_update_user_user_info" role="button" aria-expanded="false" aria-controls="kt_modal_update_user_user_info">User Information 
+                                                                        <span class="ms-2 rotate-180">
+                                                                            <i class="ki-duotone ki-down fs-3"></i>
+                                                                        </span></div>
+                                                                        <!--end::User toggle-->
+                                                                        <!--begin::User form-->
+                                                                        <div id="kt_modal_update_user_user_info" class="collapse show">
+                                                                            <!--begin::Input group-->
+                                                                            <div class="mb-7">
+                                                                                <!--begin::Label-->
+                                                                                <label class="fs-6 fw-semibold mb-2">
+                                                                                    <span>Update Avatar</span>
+                                                                                    <span class="ms-1" data-bs-toggle="tooltip" title="Allowed file types: png, jpg, jpeg.">
+                                                                                        <i class="ki-duotone ki-information fs-7">
+                                                                                            <span class="path1"></span>
+                                                                                            <span class="path2"></span>
+                                                                                            <span class="path3"></span>
+                                                                                        </i>
+                                                                                    </span>
+                                                                                </label>
+                                                                                <!--end::Label-->
+                                                                                <!--begin::Image input wrapper-->
+                                                                                <div class="mt-1">
+                                                                                    <!--begin::Image placeholder-->
+                                                                                    <style>.image-input-placeholder { background-image: url(''); } [data-bs-theme="dark"] .image-input-placeholder { background-image: url('assets/media/svg/avatars/blank-dark.svg'); }</style>
+                                                                                    <!--end::Image placeholder-->
+                                                                                    <!--begin::Image input-->
+                                                                                    <div class="image-input image-input-outline image-input-placeholder" data-kt-image-input="true">
+                                                                                        <!--begin::Preview existing avatar-->
+                                                                                        <div class="image-input-wrapper w-125px h-125px" style="background-image: url(assets/media/avatars/300-6.jpg"></div>
+                                                                                        <!--end::Preview existing avatar-->
+                                                                                        <!--begin::Edit-->
+                                                                                        <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
+                                                                                            <i class="ki-duotone ki-pencil fs-7">
+                                                                                                <span class="path1"></span>
+                                                                                                <span class="path2"></span>
+                                                                                            </i>
+                                                                                            <!--begin::Inputs-->
+                                                                                            <input type="file" name="avatar" accept=".png, .jpg, .jpeg" />
+                                                                                            <input type="hidden" name="avatar_remove" />
+                                                                                            <!--end::Inputs-->
+                                                                                        </label>
+                                                                                        <!--end::Edit-->
+                                                                                        <!--begin::Cancel-->
+                                                                                        <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
+                                                                                            <i class="ki-duotone ki-cross fs-2">
+                                                                                                <span class="path1"></span>
+                                                                                                <span class="path2"></span>
+                                                                                            </i>
+                                                                                        </span>
+                                                                                        <!--end::Cancel-->
+                                                                                        <!--begin::Remove-->
+                                                                                        <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
+                                                                                            <i class="ki-duotone ki-cross fs-2">
+                                                                                                <span class="path1"></span>
+                                                                                                <span class="path2"></span>
+                                                                                            </i>
+                                                                                        </span>
+                                                                                        <!--end::Remove-->
+                                                                                    </div>
+                                                                                    <!--end::Image input-->
+                                                                                </div>
+                                                                                <!--end::Image input wrapper-->
+                                                                            </div>
+                                                                            <!--end::Input group-->
+                                                                            <!--begin::Input group-->
+                                                                            <div class="fv-row mb-7">
+                                                                                <!--begin::Label-->
+                                                                                <label class="fs-6 fw-semibold mb-2">Name</label>
+                                                                                <!--end::Label-->
+                                                                                <!--begin::Input-->
+                                                                                <input id="e_username" type="text" class="form-control form-control-solid" placeholder="" name="name" value="" />
+                                                                                <!--end::Input-->
+                                                                            </div>
+                                                                            <div class="fv-row mb-7">
+                                                                                <!--begin::Label-->
+                                                                                <label class="fs-6 fw-semibold mb-2">userId</label>
+                                                                                <!--end::Label-->
+                                                                                <!--begin::Input-->
+                                                                                <input id="e_id" type="text" class="form-control form-control-solid" placeholder="" name="name" value="" />
+                                                                                <!--end::Input-->
+                                                                            </div>
+                                                                            <div class="fv-row mb-7">
+                                                                                <!--begin::Label-->
+                                                                                <label class="fs-6 fw-semibold mb-2">role_id</label>
+                                                                                <!--end::Label-->
+                                                                                <!--begin::Input-->
+                                                                                <input id="e_role_id" type="text" class="form-control form-control-solid" placeholder="" name="name" value="" />
+                                                                                <!--end::Input-->
+                                                                            </div>
+                                                                            <!--end::Input group-->
+                                                                            <!--begin::Input group-->
+                                                                            <div class="fv-row mb-7">
+                                                                                <!--begin::Label-->
+                                                                                <label class="fs-6 fw-semibold mb-2">
+                                                                                    <span>Email</span>
+                                                                                    <span class="ms-1" data-bs-toggle="tooltip" title="Email address must be active">
+                                                                                        <i class="ki-duotone ki-information fs-7">
+                                                                                            <span class="path1"></span>
+                                                                                            <span class="path2"></span>
+                                                                                            <span class="path3"></span>
+                                                                                        </i>
+                                                                                    </span>
+                                                                                </label>
+                                                                                <!--end::Label-->
+                                                                                <!--begin::Input-->
+                                                                                <input id="e_email" type="email" class="form-control form-control-solid" placeholder="" name="email" value="" />
+                                                                                <!--end::Input-->
+                                                                            </div>
+                                                                            <!--end::Input group-->
+                                                                            
+                                                                            
+                                                                        </div>
+                                                                        <!--end::User form-->
+                                                                    </div>
+                                                                    <!--end::Scroll-->
+                                                                </div>
+                                                                <!--end::Modal body-->
+                                                                <!--begin::Modal footer-->
+                                                                <div class="modal-footer flex-center">
+                                                                    <!--begin::Button-->
+                                                                    <button type="reset" class="btn btn-light me-3" data-kt-users-modal-action="cancel">Discard</button>
+                                                                    <!--end::Button-->
+                                                                    <!--begin::Button-->
+                                                                    <button id="e_edit" type="submit" class="btn btn-primary" data-kt-users-modal-action="submit">
+                                                                        <span class="indicator-label">Submit</span>
+                                                                        <span class="indicator-progress">Please wait... 
+                                                                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                                                                    </button>
+                                                                    <!--end::Button-->
+                                                                </div>
+                                                                <!--end::Modal footer-->
+                                                            </form>
+                                                            <!--end::Form-->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--end::Modal - Update user details-->
 											</div>
 											<!--end::Card toolbar-->
 										</div>
@@ -5663,61 +5823,77 @@ License: For each use you must have a valid license purchased only from above li
 														</th>
 														<th class="min-w-125px">User</th>
 														<th class="min-w-125px">Role</th>
-														<th class="min-w-125px">Last login</th>
-														<th class="min-w-125px">Two-step</th>
+														<th class="min-w-125px">User Email</th>
+														<th class="min-w-125px">User Id</th>
 														<th class="min-w-125px">Joined Date</th>
 														<th class="text-end min-w-100px">Actions</th>
 													</tr>
 												</thead>
 												<tbody class="text-gray-600 fw-semibold">
-													<tr>
-														<td>
-															<div class="form-check form-check-sm form-check-custom form-check-solid">
-																<input class="form-check-input" type="checkbox" value="1" />
-															</div>
-														</td>
-														<td class="d-flex align-items-center">
-															<!--begin:: Avatar -->
-															<div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
-																<a href="apps/user-management/users/view.html">
-																	<div class="symbol-label">
-																		<img src="assets/media/avatars/300-6.jpg" alt="Emma Smith" class="w-100" />
-																	</div>
-																</a>
-															</div>
-															<!--end::Avatar-->
-															<!--begin::User details-->
-															<div class="d-flex flex-column">
-																<a href="apps/user-management/users/view.html" class="text-gray-800 text-hover-primary mb-1">Emma Smith</a>
-																<span>smith@kpmg.com</span>
-															</div>
-															<!--begin::User details-->
-														</td>
-														<td>Administrator</td>
-														<td>
-															<div class="badge badge-light fw-bold">Yesterday</div>
-														</td>
-														<td></td>
-														<td>20 Dec 2024, 8:43 pm</td>
-														<td class="text-end">
-															<a href="#" class="btn btn-light btn-active-light-primary btn-flex btn-center btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions 
-															<i class="ki-duotone ki-down fs-5 ms-1"></i></a>
-															<!--begin::Menu-->
-															<div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4" data-kt-menu="true">
-																<!--begin::Menu item-->
-																<div class="menu-item px-3">
-																	<a href="apps/user-management/users/view.html" class="menu-link px-3">Edit</a>
-																</div>
-																<!--end::Menu item-->
-																<!--begin::Menu item-->
-																<div class="menu-item px-3">
-																	<a href="#" class="menu-link px-3" data-kt-users-table-filter="delete_row">Delete</a>
-																</div>
-																<!--end::Menu item-->
-															</div>
-															<!--end::Menu-->
-														</td>
-													</tr>
+                                                    <?php if (!empty($users) && is_array($users)): ?>
+                                                        <?php foreach ($users['data'] as $user): ?>
+                                                            <?php if (is_array($user)): // Ensure $user is an array ?>
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="form-check form-check-sm form-check-custom form-check-solid">
+                                                                            <input class="form-check-input" type="checkbox" value="1" />
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="d-flex align-items-center">
+                                                                        <!--begin:: Avatar -->
+                                                                        <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
+                                                                            <a href="">
+                                                                                <div class="symbol-label">
+                                                                                    <img src="<?php echo htmlspecialchars($user['avatar']); ?>" alt="" class="w-100" />
+                                                                                </div>
+                                                                            </a>
+                                                                        </div>
+                                                                        <!--end::Avatar-->
+                                                                        <!--begin::User details-->
+                                                                        <div class="d-flex flex-column">
+                                                                            <a href="" class="text-gray-800 text-hover-primary mb-1"><?php echo htmlspecialchars($user['username']); ?></a>
+                                                                            
+                                                                        </div>
+                                                                        <!--begin::User details-->
+                                                                    </td>
+                                                                    <td>
+                                                                        <?php 
+                                                                            echo htmlspecialchars($user['role_id'] == 1 ? 'admin' : 'user'); 
+                                                                        ?>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="badge badge-light fw-bold"><?php echo htmlspecialchars($user['email']); ?></div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <?php echo htmlspecialchars($user['id']); ?>
+                                                                    </td>
+                                                                    <td><?php echo htmlspecialchars($user['created_at']); ?></td>
+                                                                    <td class="text-end">
+                                                                        <a href="#" class="btn btn-light btn-active-light-primary btn-flex btn-center btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions 
+                                                                        <i class="ki-duotone ki-down fs-5 ms-1"></i></a>
+                                                                        <!--begin::Menu-->
+                                                                        <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4" data-kt-menu="true">
+                                                                            <!--begin::Menu item-->
+                                                                            <div class="menu-item px-3">
+                                                                                <a id="editUserbutton" href="#" class="menu-link px-3" data-bs-toggle="modal" data-bs-target="#kt_modal_update_details" data-user-id="<?php echo htmlspecialchars($user['id']); ?>">Edit</a>
+                                                                            </div>
+                                                                            <!--end::Menu item-->
+                                                                            <!--begin::Menu item-->
+                                                                            <div class="menu-item px-3">
+                                                                                <a href="#" class="menu-link px-3 deleteUserButton" data-kt-users-table-filter="delete_row" data-user-id="<?php echo htmlspecialchars($user['id']); ?>">Delete</a>
+                                                                            </div>
+                                                                            <!--end::Menu item-->
+                                                                        </div>
+                                                                        <!--end::Menu-->
+                                                                    </td>
+													            </tr>
+                                                            <?php endif; ?>
+                                                        <?php endforeach; ?>
+                                                    <?php else: ?>
+                                                        <tr>
+                                                            <td colspan="7" class="text-center">No users found.</td>
+                                                        </tr>
+                                                    <?php endif; ?>
                                                 </tbody>
 											</table>
 											<!--end::Table-->
@@ -10299,6 +10475,8 @@ License: For each use you must have a valid license purchased only from above li
 		<script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
 		<!--end::Vendors Javascript-->
 		<!--begin::Custom Javascript(used for this page only)-->
+        <script src="assets/js/custom/apps/user-management/users/view/view.js"></script>
+		<script src="assets/js/custom/apps/user-management/users/view/update-details.js"></script>
 		<script src="assets/js/custom/apps/user-management/users/list/table.js"></script>
 		<script src="assets/js/custom/apps/user-management/users/list/export-users.js"></script>
 		<script src="assets/js/custom/apps/user-management/users/list/add.js"></script>
@@ -10308,15 +10486,121 @@ License: For each use you must have a valid license purchased only from above li
 		<script src="assets/js/custom/utilities/modals/upgrade-plan.js"></script>
 		<script src="assets/js/custom/utilities/modals/create-app.js"></script>
 		<script src="assets/js/custom/utilities/modals/users-search.js"></script>
+		<script src="js/script.js"></script>
 		<!--end::Custom Javascript-->
 		<!--end::Javascript-->
-		<script>
-			document.getElementById('logout').addEventListener('click', () => {
-				localStorage.removeItem('token'); // Remove token from local storage
-				alert('You have logged out successfully.');
-				window.location.href = 'login.php'; // Redirect to login.php
-			});
-		</script>
+		
 		<script src="js/script.js"></script>
+        <script>
+            document.getElementById('create_user_m').addEventListener('click', function() {
+                const username = document.getElementById('username').value;
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const avatar = document.getElementById('avatar').value;
+                const roleId = document.querySelector('input[name="user_role"]:checked').value;
+                
+                async function createUser() {
+                    try {
+                        const response = await fetch('http://localhost:3000/users/create', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ username, email, password, roleId, avatar}),
+                        });
+
+                    } catch (error) {
+                        console.error('Error during login:', error);
+                        alert('An error occurred while processing your request.'); // Generic error message
+                    }
+                }   
+                createUser();
+            });
+
+            document.querySelectorAll('.deleteUserButton').forEach(button => {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault(); // Prevent default link behavior
+
+                    const userId = this.getAttribute('data-user-id'); // Get the user ID from the data attribute
+                    console.log('User ID:', userId); // You can now use this ID in your logic
+
+                    
+                    // Get the parent <tr> element and remove it
+                    const row = this.closest('tr');
+                    if (row) {
+                        row.remove();
+                    }
+                    fetch(`http://localhost:3000/users/${userId}`, {
+                        method: 'DELETE',
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('User deleted successfully');
+                        } else {
+                            console.error('Failed to delete user:', response.statusText);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                });
+            });
+
+            document.addEventListener('DOMContentLoaded', function() {
+                // Select all edit buttons
+                const editButtons = document.querySelectorAll('#editUserbutton');
+
+                editButtons.forEach(button => {
+                    button.addEventListener('click', function(event) {
+                        event.preventDefault(); // Prevent the default link behavior
+
+                        const userId = this.getAttribute('data-user-id'); // Get the user ID from the data attribute
+
+                        // Now you can use userId to populate your modal or perform other actions
+                        console.log('Editing user with ID:', userId);
+                        fetch(`http://localhost:3000/users/${userId}`, {
+                        method: 'GET',
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json(); // Parse the JSON from the response
+                        })
+                        .then(data => {
+                            // Now you can access the user data
+                            console.log('User data:', data.username);
+                            document.getElementById('e_id').value = data.id;
+                            document.getElementById('e_username').value = data.username;
+                            document.getElementById('e_email').value = data.email;
+                            document.getElementById('e_role_id').value = data.role_id;
+                        });
+                    });
+                });
+            });
+
+            document.getElementById('e_edit').addEventListener('click', function() {
+                const e_id = document.getElementById('e_id').value;
+                const e_username = document.getElementById('e_username').value;
+                const e_email = document.getElementById('e_email').value;
+                const e_role_id = document.getElementById('e_role_id').value;
+                const updatedUserData = {
+                    id: e_id,
+                    username: e_username,
+                    email: e_email,
+                    roleId: e_role_id
+                };
+                console.log(updatedUserData);
+                
+                fetch(`http://localhost:3000/users/${e_id}`, {
+                    method: 'PUT', // Use 'PATCH' if you want to update only specific fields
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedUserData) // Convert the data to JSON
+                })
+                
+            })
+        </script>
 	</body>
 </html>

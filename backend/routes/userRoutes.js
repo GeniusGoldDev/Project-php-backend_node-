@@ -9,10 +9,10 @@ router.post('/register', userController.registerUser);
 
 // User routes
 router.get('/', authenticate, authorize('users', 'view'), userController.getAllUsers);
-router.post('/create', authenticate, authorize('users', 'create'), userController.createUser);
-router.get('/:id', authenticate, authorize('users', 'view'), userController.getUser);
-router.put('/:id', authenticate, authorize('users', 'update'), userController.updateUser);
-router.delete('/:id', authenticate, authorize('users', 'delete'), userController.deleteUser);
+router.post('/create', userController.createUser);
+router.get('/:id', userController.getUser);
+router.put('/:id', userController.updateUser);
+router.delete('/:id', userController.deleteUser);
 
 // Login route
 router.post('/login', userController.loginUser);

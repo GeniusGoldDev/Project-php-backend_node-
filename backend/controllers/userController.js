@@ -56,13 +56,13 @@ exports.loginUser = async (req, res) => {
 };
 
 exports.createUser = async (req, res) => {
-    const { username, password, roleId } = req.body;
-    console.log('Creating user:', { username, roleId });
-
+    const { username, email, password, roleId, avatar } = req.body;
+    console.log({username});
+    
     try {
-        const userId = await user.createUser(username, password, roleId);
-        console.log('User created with ID:', userId);
-        res.status(201).json({ status: 'success', data: { id: userId } });
+        const userId = await user.createUser(username, email, password, roleId, avatar);
+
+        res.status(201).json({ data: { id: userId } });
     } catch (error) {
         console.error('Error creating user:', error);
         res.status(500).json({ status: 'error', message: error.message });
@@ -71,8 +71,8 @@ exports.createUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
     const { id } = req.params;
-    const { username, password, roleId } = req.body;
-    console.log('Updating user with ID:', id, { username, roleId });
+    const { username, email, roleId } = req.body;
+    console.log('Updating user with ID:',{id, username, email, roleId });
 
     try {
         const userData = await user.getUserById(id);
@@ -81,7 +81,7 @@ exports.updateUser = async (req, res) => {
             return res.status(404).json({ status: 'error', message: 'User not found' });
         }
 
-        const updateResult = await user.updateUser(id, username, password, roleId);
+        const updateResult = await user.updateUser(id, username, email, roleId);
         
         // Check if the update was blocked due to a duplicate username
         if (updateResult.error) {
@@ -105,7 +105,7 @@ exports.getAllUsers = async (req, res) => {
     try {
         const users = await user.getAllUsers();
         console.log('Retrieved users:', users);
-        res.json({ status: 'success', data: users });
+        res.json({ data: users });
     } catch (error) {
         console.error('Error retrieving users:', error);
         res.status(500).json({ status: 'error', message: error.message });
@@ -120,7 +120,7 @@ exports.getUser = async (req, res) => {
         const userData = await user.getUserById(id);
         console.log('User data retrieved:', userData);
         if (!userData) return res.status(404).json({ status: 'error', message: 'User not found' });
-        res.json({ status: 'success', data: userData });
+        res.json(userData);
     } catch (error) {
         console.error('Error retrieving user:', error);
         res.status(500).json({ status: 'error', message: error.message });

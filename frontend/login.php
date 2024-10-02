@@ -1,3 +1,38 @@
+<?php
+session_start(); // Start the session
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Get username and password from the form
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    // Send credentials to your Node.js backend
+    $loginUrl = 'http://localhost:3000/users/login'; // Replace with your actual login endpoint
+    $response = file_get_contents($loginUrl, false, stream_context_create([
+        'http' => [
+            'method' => 'POST',
+            'header' => 'Content-Type: application/json',
+            'content' => json_encode(['username' => $username, 'password' => $password]),
+        ],
+    ]));
+
+    $data = json_decode($response, true);
+
+    // Check if the token is returned
+    if (isset($data['token'])) {
+        // Store the token in the session
+        $_SESSION['token'] = $data['token'];
+        header('Location: index.php'); // Redirect to the main page after successful login
+        exit();
+    } else {
+        // Handle login failure
+        $_SESSION['error'] = $data['message'] ?? 'Login failed!';
+        header('Location: login.php'); // Redirect back to login page
+        exit();
+    }
+}
+?>
+
     <head>
 		<title>Metronic - The World's #1 Selling Tailwind CSS & Bootstrap Admin Template by KeenThemes</title>
 		<meta charset="utf-8" />
@@ -7,12 +42,9 @@
 		<meta property="og:locale" content="en_US" />
 		<meta property="og:type" content="article" />
 		<meta property="og:title" content="Metronic - The World's #1 Selling Tailwind CSS & Bootstrap Admin Template by KeenThemes" />
-		<meta property="og:url" content="https://keenthemes.com/metronic" />
 		<meta property="og:site_name" content="Metronic by Keenthemes" />
-		<link rel="canonical" href="http://preview.keenthemes.comauthentication/layouts/corporate/sign-in.html" />
 		<link rel="shortcut icon" href="assets/media/logos/favicon.ico" />
 		<!--begin::Fonts(mandatory for all pages)-->
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
 		<!--end::Fonts-->
 		<!--begin::Global Stylesheets Bundle(mandatory for all pages)-->
 		<link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
@@ -27,7 +59,7 @@
         <!--begin::Wrapper-->
         <div class="w-lg-500px p-10">
             <!--begin::Form-->
-            <form class="form w-100" novalidate="novalidate" id="loginForm" action="#">
+            <form class="form w-100" novalidate="novalidate" id="loginForm" action="login.php" method="POST">
                 <!--begin::Heading-->
                 <div class="text-center mb-11">
                     <!--begin::Title-->
@@ -67,7 +99,7 @@
                 <!--begin::Input group=-->
                 <div class="fv-row mb-8">
                     <!--begin::Email-->
-                    <input id="username" type="text" placeholder="Name" name="name" autocomplete="off" class="form-control bg-transparent" />
+                    <input id="username" type="text" placeholder="Name" name="username" autocomplete="off" class="form-control bg-transparent" />
                     <!--end::Email-->
                 </div>
                 <!--end::Input group=-->
@@ -202,43 +234,7 @@
 		<!--end::Custom Javascript-->
 		<!--end::Javascript-->
 <script>
-    document.getElementById('loginForm').onsubmit = async function (e) {
-        e.preventDefault();
-        
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-
-        try {
-            const response = await fetch('http://localhost:3000/users/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, password }),
-            });
-
-            // Check if the response is okay (status in the range 200-299)
-            if (!response.ok) {
-                const errorData = await response.json();
-                alert(errorData.message); // Display the error message from the backend
-                return;
-            }
-
-            const data = await response.json(); // Parse the response as JSON
-            if (data.status === 'success') {
-                document.getElementById('successModal').style.display = 'block';
-                localStorage.setItem('token', data.token); // Store the token in local storage
-            } else {
-                alert(data.message); // Handle any other non-successful responses
-            }
-        } catch (error) {
-            console.error('Error during login:', error);
-            alert('An error occurred while processing your request.'); // Generic error message
-        }
-    };
-
     document.getElementById('okButton').onclick = function() {
         document.getElementById('successModal').style.display = 'none';
-        window.location.href = 'index.php'; // Redirect to login page
     };
 </script>
