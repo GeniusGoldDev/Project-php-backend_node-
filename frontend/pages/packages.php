@@ -147,7 +147,7 @@
         <form id="packageForm">
             <div class="form-group">
                 <label for="packageName">Package Name</label>
-                <input type="text" id="packageName" required>
+                <input type="text" value="aa" id="packageName" required>
             </div>
             <div class="form-group">
                 <label for="description">Description</label>
@@ -163,7 +163,7 @@
             </div>
             <div class="form-group">
                 <label for="price">Price</label>
-                <input type="number" id="price" required>
+                <input type="number" value="22" id="price" required>
             </div>
             <div class="form-group">
                 <label>Package Status</label>
@@ -239,7 +239,7 @@
             const featureRows = document.querySelectorAll('#featuresContainer .feature-row');
 
             let featuresDetails = [];
-            featureRows.forEach((row, index) => {
+            featureRows.forEach((row) => {
                 const featureInput = row.querySelector('input[type="text"]');
                 const toggleInput = row.querySelector('input[type="checkbox"]');
                 if (featureInput) {
@@ -252,19 +252,36 @@
 
             const features = featuresDetails.map(f => `${f.name} (${f.status})`).join(', ');
 
-            const message = `Package "${packageName}" created successfully with the following details:\n
-            Description: ${description}\n
-            Pricing Plan: ${pricingPlan}\n
-            Price: $${price}\n
-            Package Status: ${packageStatus}\n
-            Features: ${features}`;
+            // const message = `Package "${packageName}" created successfully with the following details:\n
+            // Description: ${description}\n
+            // Pricing Plan: ${pricingPlan}\n
+            // Price: $${price}\n
+            // Package Status: ${packageStatus}\n
+            // Features: ${features}`;
 
-            document.getElementById('message').textContent = message;
+            // document.getElementById('message').textContent = message;
 
-            // Optionally reset the form
-            document.getElementById('packageForm').reset();
-            document.getElementById('featuresContainer').innerHTML = '';
+            // // Optionally reset the form
+            // document.getElementById('packageForm').reset();
+            // document.getElementById('featuresContainer').innerHTML = '';
+
+            // feature_name = featureInput.value;
+            // feature_status = toggleInput.checked ? 'Enabled' : 'Disabled'
+            console.log(packageName);
+            console.log(description);
+            console.log(pricingPlan);
+            console.log(price);
+            console.log(packageStatus);
+            console.log(message);
+            console.log(featuresDetails);
+            var name = [];
+            for(i=0;i<featuresDetails.length;i++){
+                name += featuresDetails[i]['name'];
+                // status = featuresDetails[i]['status'];
+            }
+            console.log('name:',name);
         });
     </script>
+    
 </body>
 </html>
