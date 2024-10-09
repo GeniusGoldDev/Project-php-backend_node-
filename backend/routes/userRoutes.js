@@ -46,7 +46,8 @@ router.put('/roles/:id', userController.updateRole);
 router.get('/permission/:id', userController.getPermission);
 router.delete('/del_permission/', userController.delPermission);
 router.put('/edit_permission/', userController.editPermission);
-
+router.post('/create_package', userController.createPackage);
+router.get('/get_package', userController.getpackage);
 router.get('/:id', userController.getUser);
 router.get('/setting/:id', userController.getSetting);
 router.put('/settingup/:id', upload.single('avatar'), userController.getSettingup);

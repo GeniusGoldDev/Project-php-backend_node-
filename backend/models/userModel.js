@@ -17,7 +17,6 @@ class User {
         return rows[0]; // Return the first matching user or undefined
     }
 
-
     async createUser(username, email, password, roleId, avatar) {
         try {
             // Hash the password before storing it in the database
@@ -35,7 +34,6 @@ class User {
         }
     }
       
-
     async updateUserSetting(id,username, company, contact_phone, company_site, country, language, time_zone, currency, communication, allow, avatar) {
         // Check if the new username already exists for another user
         const [existingUser] = await this.pool.execute(
@@ -210,7 +208,6 @@ class User {
         return { affectedRows: result.affectedRows }; // Return the number of affected rows
     }
     
-
     async getPermissionMapping() {
         const permissionMapping = {};
         const [permissions] = await this.pool.execute('SELECT id, permission_name FROM permissions');
@@ -230,7 +227,6 @@ class User {
         );
     }
 
-    // Method to check if a permission already exists
     async permissionExists(permission_name) {
         try {
             const [result] = await this.pool.execute('SELECT * FROM role_permissions WHERE menu_name = ?', [permission_name]);
@@ -241,7 +237,6 @@ class User {
         }
     }
 
-    // Method to add a new permission
     async addPermission(permission_name) {
         try {
             const [result] = await this.pool.execute('INSERT INTO role_permissions (menu_name) VALUES (?)', [permission_name]);
@@ -264,8 +259,6 @@ class User {
 
     async updatePermission(inputValue, management_name) {
         try {
-            // You may need to use a unique identifier to find the permission to update.
-            // Here, I'm assuming that you have an `id` or similar unique identifier to update the correct row.
             const [result] = await this.pool.execute(
                 'UPDATE role_permissions SET menu_name = ? WHERE menu_name = ?',
                 [inputValue, management_name] // Replace the management name based on your logic
@@ -277,6 +270,96 @@ class User {
         }
     }
 
+    async createPackage(packageName, description, pricingPlan, price, packageStatus, featureNames, featureStatus) {
+        try {
+            // Insert package into the 'packages' table
+            const [packageResult] = await this.pool.execute(
+                'INSERT INTO packages (package_name, description, pricing_plan, price, status) VALUES (?, ?, ?, ?, ?)', 
+                [packageName, description, pricingPlan, price, packageStatus]
+            );
+            const packageId = packageResult.insertId; // Get the newly inserted package ID
+
+            // Insert each feature into the 'features' table
+            const insertFeatureQuery = 'INSERT INTO features (package_id, name, status) VALUES (?, ?, ?)';
+
+            // Iterate over features and insert each one
+            for (let i = 0; i < featureNames.length; i++) {
+                await this.pool.execute(insertFeatureQuery, [packageId, featureNames[i], featureStatus[i]]);
+            }
+
+            return packageId; // Return the package ID after successful insertion
+        } catch (error) {
+            console.error('Error creating package:', error);
+            throw error; // Re-throw the error for the controller to handle
+        }
+    }
+
+    async getPackage() {
+        const [rows] = await this.pool.execute(
+            'SELECT p.package_name, p.price, p.description, p.pricing_plan, p.status AS package_status, ' +
+            'GROUP_CONCAT(f.name SEPARATOR \', \') AS feature_names, ' +
+            'GROUP_CONCAT(f.status SEPARATOR \', \') AS feature_statuses ' +
+            'FROM packages AS p ' +
+            'JOIN features AS f ON p.id = f.package_id ' +
+            'WHERE p.pricing_plan = \'monthly\' ' +
+            'GROUP BY p.id'
+        );
+        const [rows1] = await this.pool.execute(
+            'SELECT p.package_name, p.price, p.description, p.pricing_plan, p.status AS package_status, ' +
+            'GROUP_CONCAT(f.name SEPARATOR \', \') AS feature_names, ' +
+            'GROUP_CONCAT(f.status SEPARATOR \', \') AS feature_statuses ' +
+            'FROM packages AS p ' +
+            'JOIN features AS f ON p.id = f.package_id ' +
+            'WHERE p.pricing_plan = \'yearly\' ' +
+            'GROUP BY p.id'
+        );
+        // Format the output
+        const formattedRows = rows.map(row => {
+            const featureNames = row.feature_names.split(', ');
+            const featureStatuses = row.feature_statuses.split(', ');
+    
+            const featuresArray = featureNames.map((name, index) => {
+                return {
+                    feature_name: name,
+                    feature_status: featureStatuses[index]
+                };
+            });
+    
+            return {
+                package_name: row.package_name,
+                price: row.price,
+                description: row.description,
+                pricing_plan: row.pricing_plan,
+                package_status: row.package_status,
+                features: featuresArray  // This will be an array of objects
+            };
+        });
+        const formattedRows1 = rows1.map(row => {
+            const featureNames = row.feature_names.split(', ');
+            const featureStatuses = row.feature_statuses.split(', ');
+    
+            const featuresArray = featureNames.map((name, index) => {
+                return {
+                    feature_name: name,
+                    feature_status: featureStatuses[index]
+                };
+            });
+    
+            return {
+                package_name: row.package_name,
+                price: row.price,
+                description: row.description,
+                pricing_plan: row.pricing_plan,
+                package_status: row.package_status,
+                features: featuresArray  // This will be an array of objects
+            };
+        });
+    
+        return [formattedRows,formattedRows1];  // Return the formatted rows directly
+    }
+    
+    
+    
 }
 
 module.exports = User;

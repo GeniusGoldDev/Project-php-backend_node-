@@ -1,11 +1,51 @@
+<?php
+session_start();
+if (!isset($_SESSION['token'])) {
+    die("No token provided. Please log in.");
+}
+$token = $_SESSION['token'];
 
+$ch = curl_init('http://localhost:3000/users/get_package'); // Ensure this is the correct endpoint
 
+// Set the headers
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'Authorization: Bearer ' . $token, // Include your token here
+    'Content-Type: application/json'
+]);
 
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-<!-- Display users or handle empty response -->
+$response = curl_exec($ch);
 
-<!DOCTYPE html>
+// Check for cURL errors
+if (curl_errno($ch)) {
+    echo 'Curl error: ' . curl_error($ch);
+    curl_close($ch);
+    exit;
+}
 
+curl_close($ch);
+
+// Decode JSON response into an associative array
+$packages = json_decode($response, true);
+
+// Check if decoding was successful
+if (json_last_error() !== JSON_ERROR_NONE) {
+    die('Error decoding JSON: ' . json_last_error_msg());
+}
+
+// Check if permissions were retrieved successfully
+if (isset($permissions['error'])) {
+    die('Error fetching permissions: ' . htmlspecialchars($packages['error']));
+}
+// Debug output to inspect the structure of $permissions
+
+// echo '<pre>';
+// print_r($packages);
+// echo '</pre>';
+// exit; // Stop execution for debugging
+
+?>
 <html lang="en">
 	<!--begin::Head-->
 	<head>
@@ -5305,111 +5345,13 @@
 												<!--end::Heading-->
 												<!--begin::Nav group-->
 												<div class="nav-group nav-group-outline mx-auto mb-15" data-kt-buttons="true">
-													<button class="btn btn-color-gray-600 btn-active btn-active-secondary px-6 py-3 me-2 active" data-kt-plan="month">Monthly</button>
-													<button class="btn btn-color-gray-600 btn-active btn-active-secondary px-6 py-3" data-kt-plan="annual">Annual</button>
+													<button id="monthly" class="btn btn-color-gray-600 btn-active btn-active-secondary px-6 py-3 me-2 active" data-kt-plan="month">Monthly</button>
+													<button id="yearly" class="btn btn-color-gray-600 btn-active btn-active-secondary px-6 py-3" data-kt-plan="annual">Annual</button>
 												</div>
 												<!--end::Nav group-->
 												<!--begin::Row-->
-												<div class="row g-10">
-													<!--begin::Col-->
-													<div class="col-xl-4">
-														<div class="d-flex h-100 align-items-center">
-															<!--begin::Option-->
-															<div class="w-100 d-flex flex-column flex-center rounded-3 bg-light bg-opacity-75 py-15 px-10">
-																<!--begin::Heading-->
-																<div class="mb-7 text-center">
-																	<!--begin::Title-->
-																	<h1 class="text-gray-900 mb-5 fw-bolder">Startup</h1>
-																	<!--end::Title-->
-																	<!--begin::Description-->
-																	<div class="text-gray-600 fw-semibold mb-5">Optimal for 10+ team size
-																	<br />and new startup</div>
-																	<!--end::Description-->
-																	<!--begin::Price-->
-																	<div class="text-center">
-																		<span class="mb-2 text-primary">$</span>
-																		<span class="fs-3x fw-bold text-primary" data-kt-plan-price-month="39" data-kt-plan-price-annual="399">39</span>
-																		<span class="fs-7 fw-semibold opacity-50">/ 
-																		<span data-kt-element="period">Mon</span></span>
-																	</div>
-																	<!--end::Price-->
-																</div>
-																<!--end::Heading-->
-																<!--begin::Features-->
-																<div class="w-100 mb-10">
-																	<!--begin::Item-->
-																	<div class="d-flex align-items-center mb-5">
-																		<span class="fw-semibold fs-6 text-gray-800 flex-grow-1 pe-3">Up to 10 Active Users</span>
-																		<i class="ki-duotone ki-check-circle fs-1 text-success">
-																			<span class="path1"></span>
-																			<span class="path2"></span>
-																		</i>
-																	</div>
-																	<!--end::Item-->
-																	<!--begin::Item-->
-																	<div class="d-flex align-items-center mb-5">
-																		<span class="fw-semibold fs-6 text-gray-800 flex-grow-1 pe-3">Up to 30 Project Integrations</span>
-																		<i class="ki-duotone ki-check-circle fs-1 text-success">
-																			<span class="path1"></span>
-																			<span class="path2"></span>
-																		</i>
-																	</div>
-																	<!--end::Item-->
-																	<!--begin::Item-->
-																	<div class="d-flex align-items-center mb-5">
-																		<span class="fw-semibold fs-6 text-gray-800 flex-grow-1 pe-3">Analytics Module</span>
-																		<i class="ki-duotone ki-check-circle fs-1 text-success">
-																			<span class="path1"></span>
-																			<span class="path2"></span>
-																		</i>
-																	</div>
-																	<!--end::Item-->
-																	<!--begin::Item-->
-																	<div class="d-flex align-items-center mb-5">
-																		<span class="fw-semibold fs-6 text-gray-600 flex-grow-1">Finance Module</span>
-																		<i class="ki-duotone ki-cross-circle fs-1">
-																			<span class="path1"></span>
-																			<span class="path2"></span>
-																		</i>
-																	</div>
-																	<!--end::Item-->
-																	<!--begin::Item-->
-																	<div class="d-flex align-items-center mb-5">
-																		<span class="fw-semibold fs-6 text-gray-600 flex-grow-1">Accounting Module</span>
-																		<i class="ki-duotone ki-cross-circle fs-1">
-																			<span class="path1"></span>
-																			<span class="path2"></span>
-																		</i>
-																	</div>
-																	<!--end::Item-->
-																	<!--begin::Item-->
-																	<div class="d-flex align-items-center mb-5">
-																		<span class="fw-semibold fs-6 text-gray-600 flex-grow-1">Network Platform</span>
-																		<i class="ki-duotone ki-cross-circle fs-1">
-																			<span class="path1"></span>
-																			<span class="path2"></span>
-																		</i>
-																	</div>
-																	<!--end::Item-->
-																	<!--begin::Item-->
-																	<div class="d-flex align-items-center">
-																		<span class="fw-semibold fs-6 text-gray-600 flex-grow-1">Unlimited Cloud Space</span>
-																		<i class="ki-duotone ki-cross-circle fs-1">
-																			<span class="path1"></span>
-																			<span class="path2"></span>
-																		</i>
-																	</div>
-																	<!--end::Item-->
-																</div>
-																<!--end::Features-->
-																<!--begin::Select-->
-																<a href="#" class="btn btn-sm btn-primary">Select</a>
-																<!--end::Select-->
-															</div>
-															<!--end::Option-->
-														</div>
-													</div>
-													<!--end::Col-->
+												<div id="display_m" class="row g-10">
+												<?php foreach($packages[0] as $package):?>
 													<!--begin::Col-->
 													<div class="col-xl-4">
 														<div class="d-flex h-100 align-items-center">
@@ -5418,86 +5360,41 @@
 																<!--begin::Heading-->
 																<div class="mb-7 text-center">
 																	<!--begin::Title-->
-																	<h1 class="text-gray-900 mb-5 fw-bolder">Advanced</h1>
+																	<h1 class="text-gray-900 mb-5 fw-bolder"><?php echo($package['package_name']);?></h1>
 																	<!--end::Title-->
 																	<!--begin::Description-->
-																	<div class="text-gray-600 fw-semibold mb-5">Optimal for 100+ team siz
-																	<br />e and grown company</div>
+																	<div class="text-gray-600 fw-semibold mb-5"><?php echo($package['description']);?></div>
 																	<!--end::Description-->
 																	<!--begin::Price-->
 																	<div class="text-center">
 																		<span class="mb-2 text-primary">$</span>
-																		<span class="fs-3x fw-bold text-primary" data-kt-plan-price-month="339" data-kt-plan-price-annual="3399">339</span>
+																		<span class="fs-3x fw-bold text-primary" data-kt-plan-price-month="339" data-kt-plan-price-annual="3399"><?php echo($package['price']);?></span>
 																		<span class="fs-7 fw-semibold opacity-50">/ 
-																		<span data-kt-element="period">Mon</span></span>
+																		<span data-kt-element="period"><?php echo($package['pricing_plan']);?></span></span>
 																	</div>
 																	<!--end::Price-->
 																</div>
 																<!--end::Heading-->
 																<!--begin::Features-->
 																<div class="w-100 mb-10">
+																	
 																	<!--begin::Item-->
+																	<?php foreach($package['features'] as $feature):?>
 																	<div class="d-flex align-items-center mb-5">
-																		<span class="fw-semibold fs-6 text-gray-800 flex-grow-1 pe-3">Up to 10 Active Users</span>
-																		<i class="ki-duotone ki-check-circle fs-1 text-success">
-																			<span class="path1"></span>
-																			<span class="path2"></span>
-																		</i>
+																		<span class="fw-semibold fs-6 text-gray-800 flex-grow-1 pe-3"><?php echo ($feature['feature_name']);?></span>
+																		<?php if ($feature['feature_status'] == 'Enabled'): ?>
+																			<i class="ki-duotone ki-check-circle fs-1 text-success">
+																				<span class="path1"></span>
+																				<span class="path2"></span>
+																			</i>
+																		<?php else: ?>
+																			<i class="ki-duotone ki-cross-circle fs-1">
+																				<span class="path1"></span>
+																				<span class="path2"></span>
+																			</i>
+																		<?php endif; ?>
 																	</div>
-																	<!--end::Item-->
-																	<!--begin::Item-->
-																	<div class="d-flex align-items-center mb-5">
-																		<span class="fw-semibold fs-6 text-gray-800 flex-grow-1 pe-3">Up to 30 Project Integrations</span>
-																		<i class="ki-duotone ki-check-circle fs-1 text-success">
-																			<span class="path1"></span>
-																			<span class="path2"></span>
-																		</i>
-																	</div>
-																	<!--end::Item-->
-																	<!--begin::Item-->
-																	<div class="d-flex align-items-center mb-5">
-																		<span class="fw-semibold fs-6 text-gray-800 flex-grow-1 pe-3">Analytics Module</span>
-																		<i class="ki-duotone ki-check-circle fs-1 text-success">
-																			<span class="path1"></span>
-																			<span class="path2"></span>
-																		</i>
-																	</div>
-																	<!--end::Item-->
-																	<!--begin::Item-->
-																	<div class="d-flex align-items-center mb-5">
-																		<span class="fw-semibold fs-6 text-gray-800 flex-grow-1 pe-3">Finance Module</span>
-																		<i class="ki-duotone ki-check-circle fs-1 text-success">
-																			<span class="path1"></span>
-																			<span class="path2"></span>
-																		</i>
-																	</div>
-																	<!--end::Item-->
-																	<!--begin::Item-->
-																	<div class="d-flex align-items-center mb-5">
-																		<span class="fw-semibold fs-6 text-gray-800 flex-grow-1 pe-3">Accounting Module</span>
-																		<i class="ki-duotone ki-check-circle fs-1 text-success">
-																			<span class="path1"></span>
-																			<span class="path2"></span>
-																		</i>
-																	</div>
-																	<!--end::Item-->
-																	<!--begin::Item-->
-																	<div class="d-flex align-items-center mb-5">
-																		<span class="fw-semibold fs-6 text-gray-600 flex-grow-1">Network Platform</span>
-																		<i class="ki-duotone ki-cross-circle fs-1">
-																			<span class="path1"></span>
-																			<span class="path2"></span>
-																		</i>
-																	</div>
-																	<!--end::Item-->
-																	<!--begin::Item-->
-																	<div class="d-flex align-items-center">
-																		<span class="fw-semibold fs-6 text-gray-600 flex-grow-1">Unlimited Cloud Space</span>
-																		<i class="ki-duotone ki-cross-circle fs-1">
-																			<span class="path1"></span>
-																			<span class="path2"></span>
-																		</i>
-																	</div>
+																	<?php endforeach;?>
 																	<!--end::Item-->
 																</div>
 																<!--end::Features-->
@@ -5509,94 +5406,54 @@
 														</div>
 													</div>
 													<!--end::Col-->
+												<?php endforeach;?>	
+												</div>
+												<!--end::Row-->
+												<div id="display_y" style="display:none" class="row g-10">
+												<?php foreach($packages[1] as $package):?>
 													<!--begin::Col-->
 													<div class="col-xl-4">
 														<div class="d-flex h-100 align-items-center">
 															<!--begin::Option-->
-															<div class="w-100 d-flex flex-column flex-center rounded-3 bg-light bg-opacity-75 py-15 px-10">
+															<div class="w-100 d-flex flex-column flex-center rounded-3 bg-light bg-opacity-75 py-20 px-10">
 																<!--begin::Heading-->
 																<div class="mb-7 text-center">
 																	<!--begin::Title-->
-																	<h1 class="text-gray-900 mb-5 fw-bolder">Enterprise</h1>
+																	<h1 class="text-gray-900 mb-5 fw-bolder"><?php echo($package['package_name']);?></h1>
 																	<!--end::Title-->
 																	<!--begin::Description-->
-																	<div class="text-gray-600 fw-semibold mb-5">Optimal for 1000+ team
-																	<br />and enterpise</div>
+																	<div class="text-gray-600 fw-semibold mb-5"><?php echo($package['description']);?></div>
 																	<!--end::Description-->
 																	<!--begin::Price-->
 																	<div class="text-center">
 																		<span class="mb-2 text-primary">$</span>
-																		<span class="fs-3x fw-bold text-primary" data-kt-plan-price-month="999" data-kt-plan-price-annual="9999">999</span>
+																		<span class="fs-3x fw-bold text-primary" data-kt-plan-price-month="339" data-kt-plan-price-annual="3399"><?php echo($package['price']);?></span>
 																		<span class="fs-7 fw-semibold opacity-50">/ 
-																		<span data-kt-element="period">Mon</span></span>
+																		<span data-kt-element="period"><?php echo($package['pricing_plan']);?></span></span>
 																	</div>
 																	<!--end::Price-->
 																</div>
 																<!--end::Heading-->
 																<!--begin::Features-->
 																<div class="w-100 mb-10">
+																	
 																	<!--begin::Item-->
+																	<?php foreach($package['features'] as $feature):?>
 																	<div class="d-flex align-items-center mb-5">
-																		<span class="fw-semibold fs-6 text-gray-800 flex-grow-1 pe-3">Up to 10 Active Users</span>
-																		<i class="ki-duotone ki-check-circle fs-1 text-success">
-																			<span class="path1"></span>
-																			<span class="path2"></span>
-																		</i>
+																		<span class="fw-semibold fs-6 text-gray-800 flex-grow-1 pe-3"><?php echo ($feature['feature_name']);?></span>
+																		<?php if ($feature['feature_status'] == 'Enabled'): ?>
+																			<i class="ki-duotone ki-check-circle fs-1 text-success">
+																				<span class="path1"></span>
+																				<span class="path2"></span>
+																			</i>
+																		<?php else: ?>
+																			<i class="ki-duotone ki-cross-circle fs-1">
+																				<span class="path1"></span>
+																				<span class="path2"></span>
+																			</i>
+																		<?php endif; ?>
 																	</div>
-																	<!--end::Item-->
-																	<!--begin::Item-->
-																	<div class="d-flex align-items-center mb-5">
-																		<span class="fw-semibold fs-6 text-gray-800 flex-grow-1 pe-3">Up to 30 Project Integrations</span>
-																		<i class="ki-duotone ki-check-circle fs-1 text-success">
-																			<span class="path1"></span>
-																			<span class="path2"></span>
-																		</i>
-																	</div>
-																	<!--end::Item-->
-																	<!--begin::Item-->
-																	<div class="d-flex align-items-center mb-5">
-																		<span class="fw-semibold fs-6 text-gray-800 flex-grow-1 pe-3">Analytics Module</span>
-																		<i class="ki-duotone ki-check-circle fs-1 text-success">
-																			<span class="path1"></span>
-																			<span class="path2"></span>
-																		</i>
-																	</div>
-																	<!--end::Item-->
-																	<!--begin::Item-->
-																	<div class="d-flex align-items-center mb-5">
-																		<span class="fw-semibold fs-6 text-gray-800 flex-grow-1 pe-3">Finance Module</span>
-																		<i class="ki-duotone ki-check-circle fs-1 text-success">
-																			<span class="path1"></span>
-																			<span class="path2"></span>
-																		</i>
-																	</div>
-																	<!--end::Item-->
-																	<!--begin::Item-->
-																	<div class="d-flex align-items-center mb-5">
-																		<span class="fw-semibold fs-6 text-gray-800 flex-grow-1 pe-3">Accounting Module</span>
-																		<i class="ki-duotone ki-check-circle fs-1 text-success">
-																			<span class="path1"></span>
-																			<span class="path2"></span>
-																		</i>
-																	</div>
-																	<!--end::Item-->
-																	<!--begin::Item-->
-																	<div class="d-flex align-items-center mb-5">
-																		<span class="fw-semibold fs-6 text-gray-800 flex-grow-1 pe-3">Network Platform</span>
-																		<i class="ki-duotone ki-check-circle fs-1 text-success">
-																			<span class="path1"></span>
-																			<span class="path2"></span>
-																		</i>
-																	</div>
-																	<!--end::Item-->
-																	<!--begin::Item-->
-																	<div class="d-flex align-items-center">
-																		<span class="fw-semibold fs-6 text-gray-800 flex-grow-1 pe-3">Unlimited Cloud Space</span>
-																		<i class="ki-duotone ki-check-circle fs-1 text-success">
-																			<span class="path1"></span>
-																			<span class="path2"></span>
-																		</i>
-																	</div>
+																	<?php endforeach;?>
 																	<!--end::Item-->
 																</div>
 																<!--end::Features-->
@@ -5608,8 +5465,8 @@
 														</div>
 													</div>
 													<!--end::Col-->
+												<?php endforeach;?>	
 												</div>
-												<!--end::Row-->
 											</div>
 											<!--end::Plans-->
 										</div>
@@ -10240,6 +10097,23 @@
                 body: formData, // Convert the data to JSON
             })
         });
+
+
         </script>
+		<script>
+			document.getElementById('monthly').addEventListener('click', function() {
+				// Show the monthly div and hide the yearly div
+				document.getElementById('display_m').style.display = 'block';
+				document.getElementById('display_m').style.display = 'flex';
+				document.getElementById('display_y').style.display = 'none';
+			});
+
+			document.getElementById('yearly').addEventListener('click', function() {
+				// Show the yearly div and hide the monthly div
+				document.getElementById('display_y').style.display = 'block';
+				document.getElementById('display_y').style.display = 'flex';
+				document.getElementById('display_m').style.display = 'none';
+			});
+		</script>
 	</body>
 </html>

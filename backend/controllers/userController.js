@@ -406,3 +406,36 @@ exports.editPermission = async (req, res) => {
     }
 };
 
+exports.createPackage = async (req, res) => {
+    const { packageName,description,pricingPlan,price,packageStatus,featuresDetails } = req.body;
+
+    console.log(packageName,description,pricingPlan,price,packageStatus,featuresDetails);
+
+    const featureNames = featuresDetails.map(feature => feature.name); // Extract all feature names into an array
+    const featureStatus = featuresDetails.map(feature => feature.status); // Extract all feature names into an array
+
+    console.log('Feature Names:', featureNames); // This will log all feature names
+    console.log('Feature Status:', featureStatus); // This will log all feature names
+
+    try {
+        const userId = await user.createPackage( packageName,description,pricingPlan,price,packageStatus,featureNames,featureStatus);
+
+        res.status(201).json({ message: 'Package created successfully.', data: { id: userId } });
+    } catch (error) {
+        console.error('Error creating user:', error);
+        res.status(500).json({ status: 'error', message: error.message });
+    }
+};
+
+exports.getpackage = async (req, res) => {
+
+    try {
+        const package = await user.getPackage();
+        console.log('Retrieved package:', package);
+        res.json(package);
+    } catch (error) {
+        console.error('Error retrieving package:', error);
+        res.status(500).json({ status: 'error', message: error.message });
+    }
+};
+
