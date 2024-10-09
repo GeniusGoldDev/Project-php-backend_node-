@@ -8,7 +8,7 @@ if (!isset($_SESSION['token'])) {
 
 // Fetch data from the backend using cURL
 $token = $_SESSION['token'];
-$ch = curl_init('http://localhost:3000/users'); // Replace with your actual users endpoint
+$ch = curl_init('http://localhost:3000/users/permissions'); // Ensure this is the correct endpoint
 
 // Set the headers
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -30,20 +30,26 @@ if (curl_errno($ch)) {
 curl_close($ch);
 
 // Decode JSON response into an associative array
-$users = json_decode($response, true);
+$permissions = json_decode($response);
 
 // Check if decoding was successful
 if (json_last_error() !== JSON_ERROR_NONE) {
-    die('Error decoding JSON: ' . json_last_error_msg());
+	die('Error decoding JSON: ' . json_last_error_msg());
 }
 
-// Debug output to inspect the structure of $users
+// Check if permissions were retrieved successfully
+if (isset($permissions['error'])) {
+	die('Error fetching permissions: ' . htmlspecialchars($permissions['error']));
+}
 // echo '<pre>';
-// print_r($users);
+// print_r($permissions);
 // echo '</pre>';
 // exit; // Stop execution for debugging
 
+// Debug output to inspect the structure of $permissions
 ?>
+
+
 
 
 
@@ -5210,7 +5216,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 									<!--begin::Page title-->
 									<div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
 										<!--begin::Title-->
-										<h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Users List</h1>
+										<h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Permissions List</h1>
 										<!--end::Title-->
 										<!--begin::Breadcrumb-->
 										<ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
@@ -5226,14 +5232,6 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 											<!--end::Item-->
 											<!--begin::Item-->
 											<li class="breadcrumb-item text-muted">User Management</li>
-											<!--end::Item-->
-											<!--begin::Item-->
-											<li class="breadcrumb-item">
-												<span class="bullet bg-gray-500 w-5px h-2px"></span>
-											</li>
-											<!--end::Item-->
-											<!--begin::Item-->
-											<li class="breadcrumb-item text-muted">Users</li>
 											<!--end::Item-->
 										</ul>
 										<!--end::Breadcrumb-->
@@ -5251,7 +5249,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 											</i>Filter</a>
 											<!--end::Menu toggle-->
 											<!--begin::Menu 1-->
-											<div class="menu menu-sub menu-sub-dropdown w-250px w-md-300px" data-kt-menu="true" id="kt_menu_66b9705d7a500">
+											<div class="menu menu-sub menu-sub-dropdown w-250px w-md-300px" data-kt-menu="true" id="kt_menu_66b970552bf4c">
 												<!--begin::Header-->
 												<div class="px-7 py-5">
 													<div class="fs-5 text-gray-900 fw-bold">Filter Options</div>
@@ -5269,7 +5267,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 														<!--end::Label-->
 														<!--begin::Input-->
 														<div>
-															<select class="form-select form-select-solid" multiple="multiple" data-kt-select2="true" data-close-on-select="false" data-placeholder="Select option" data-dropdown-parent="#kt_menu_66b9705d7a500" data-allow-clear="true">
+															<select class="form-select form-select-solid" multiple="multiple" data-kt-select2="true" data-close-on-select="false" data-placeholder="Select option" data-dropdown-parent="#kt_menu_66b970552bf4c" data-allow-clear="true">
 																<option></option>
 																<option value="1">Approved</option>
 																<option value="2">Pending</option>
@@ -5344,589 +5342,244 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 								<!--begin::Content container-->
 								<div id="kt_app_content_container" class="app-container container-xxl">
 									<!--begin::Card-->
-									<div class="card">
+									<div class="card card-flush">
 										<!--begin::Card header-->
-										<div class="card-header border-0 pt-6">
+										<div class="card-header mt-6">
 											<!--begin::Card title-->
 											<div class="card-title">
 												<!--begin::Search-->
-												<div class="d-flex align-items-center position-relative my-1">
+												<div class="d-flex align-items-center position-relative my-1 me-5">
 													<i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
 														<span class="path1"></span>
 														<span class="path2"></span>
 													</i>
-													<input type="text" data-kt-user-table-filter="search" class="form-control form-control-solid w-250px ps-13" placeholder="Search user" />
+													<input type="text" data-kt-permissions-table-filter="search" class="form-control form-control-solid w-250px ps-13" placeholder="Search Permissions" />
 												</div>
 												<!--end::Search-->
 											</div>
-											<!--begin::Card title-->
+											<!--end::Card title-->
 											<!--begin::Card toolbar-->
 											<div class="card-toolbar">
-												<!--begin::Toolbar-->
-												<div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
-													<!--begin::Filter-->
-													<button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-													<i class="ki-duotone ki-filter fs-2">
-														<span class="path1"></span>
-														<span class="path2"></span>
-													</i>Filter</button>
-													<!--begin::Menu 1-->
-													<div class="menu menu-sub menu-sub-dropdown w-300px w-md-325px" data-kt-menu="true">
-														<!--begin::Header-->
-														<div class="px-7 py-5">
-															<div class="fs-5 text-gray-900 fw-bold">Filter Options</div>
-														</div>
-														<!--end::Header-->
-														<!--begin::Separator-->
-														<div class="separator border-gray-200"></div>
-														<!--end::Separator-->
-														<!--begin::Content-->
-														<div class="px-7 py-5" data-kt-user-table-filter="form">
-															<!--begin::Input group-->
-															<div class="mb-10">
-																<label class="form-label fs-6 fw-semibold">Role:</label>
-																<select class="form-select form-select-solid fw-bold" data-kt-select2="true" data-placeholder="Select option" data-allow-clear="true" data-kt-user-table-filter="role" data-hide-search="true">
-																	<option></option>
-																	<option value="Administrator">Administrator</option>
-																	<option value="Analyst">Analyst</option>
-																	<option value="Developer">Developer</option>
-																	<option value="Support">Support</option>
-																	<option value="Trial">Trial</option>
-																</select>
-															</div>
-															<!--end::Input group-->
-															<!--begin::Input group-->
-															<div class="mb-10">
-																<label class="form-label fs-6 fw-semibold">Two Step Verification:</label>
-																<select class="form-select form-select-solid fw-bold" data-kt-select2="true" data-placeholder="Select option" data-allow-clear="true" data-kt-user-table-filter="two-step" data-hide-search="true">
-																	<option></option>
-																	<option value="Enabled">Enabled</option>
-																</select>
-															</div>
-															<!--end::Input group-->
-															<!--begin::Actions-->
-															<div class="d-flex justify-content-end">
-																<button type="reset" class="btn btn-light btn-active-light-primary fw-semibold me-2 px-6" data-kt-menu-dismiss="true" data-kt-user-table-filter="reset">Reset</button>
-																<button type="submit" class="btn btn-primary fw-semibold px-6" data-kt-menu-dismiss="true" data-kt-user-table-filter="filter">Apply</button>
-															</div>
-															<!--end::Actions-->
-														</div>
-														<!--end::Content-->
-													</div>
-													<!--end::Menu 1-->
-													<!--end::Filter-->
-													<!--begin::Export-->
-													<button type="button" class="btn btn-light-primary me-3" data-bs-toggle="modal" data-bs-target="#kt_modal_export_users">
-													<i class="ki-duotone ki-exit-up fs-2">
-														<span class="path1"></span>
-														<span class="path2"></span>
-													</i>Export</button>
-													<!--end::Export-->
-													<!--begin::Add user-->
-													<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_user">
-													<i class="ki-duotone ki-plus fs-2"></i>Add User</button>
-													<!--end::Add user-->
-												</div>
-												<!--end::Toolbar-->
-												<!--begin::Group actions-->
-												<div class="d-flex justify-content-end align-items-center d-none" data-kt-user-table-toolbar="selected">
-													<div class="fw-bold me-5">
-													<span class="me-2" data-kt-user-table-select="selected_count"></span>Selected</div>
-													<button type="button" class="btn btn-danger" data-kt-user-table-select="delete_selected">Delete Selected</button>
-												</div>
-												<!--end::Group actions-->
-												<!--begin::Modal - Adjust Balance-->
-												<div class="modal fade" id="kt_modal_export_users" tabindex="-1" aria-hidden="true">
-													<!--begin::Modal dialog-->
-													<div class="modal-dialog modal-dialog-centered mw-650px">
-														<!--begin::Modal content-->
-														<div class="modal-content">
-															<!--begin::Modal header-->
-															<div class="modal-header">
-																<!--begin::Modal title-->
-																<h2 class="fw-bold">Export Users</h2>
-																<!--end::Modal title-->
-																<!--begin::Close-->
-																<div class="btn btn-icon btn-sm btn-active-icon-primary" data-kt-users-modal-action="close">
-																	<i class="ki-duotone ki-cross fs-1">
-																		<span class="path1"></span>
-																		<span class="path2"></span>
-																	</i>
-																</div>
-																<!--end::Close-->
-															</div>
-															<!--end::Modal header-->
-															<!--begin::Modal body-->
-															<div class="modal-body scroll-y mx-5 mx-xl-15 my-7">
-																<!--begin::Form-->
-																<form id="kt_modal_export_users_form" class="form" action="#">
-																	<!--begin::Input group-->
-																	<div class="fv-row mb-10">
-																		<!--begin::Label-->
-																		<label class="fs-6 fw-semibold form-label mb-2">Select Roles:</label>
-																		<!--end::Label-->
-																		<!--begin::Input-->
-																		<select name="role" data-control="select2" data-placeholder="Select a role" data-hide-search="true" class="form-select form-select-solid fw-bold">
-																			<option></option>
-																			<option value="Administrator">Administrator</option>
-																			<option value="Analyst">Analyst</option>
-																			<option value="Developer">Developer</option>
-																			<option value="Support">Support</option>
-																			<option value="Trial">Trial</option>
-																		</select>
-																		<!--end::Input-->
-																	</div>
-																	<!--end::Input group-->
-																	<!--begin::Input group-->
-																	<div class="fv-row mb-10">
-																		<!--begin::Label-->
-																		<label class="required fs-6 fw-semibold form-label mb-2">Select Export Format:</label>
-																		<!--end::Label-->
-																		<!--begin::Input-->
-																		<select name="format" data-control="select2" data-placeholder="Select a format" data-hide-search="true" class="form-select form-select-solid fw-bold">
-																			<option></option>
-																			<option value="excel">Excel</option>
-																			<option value="pdf">PDF</option>
-																			<option value="cvs">CVS</option>
-																			<option value="zip">ZIP</option>
-																		</select>
-																		<!--end::Input-->
-																	</div>
-																	<!--end::Input group-->
-																	<!--begin::Actions-->
-																	<div class="text-center">
-																		<button type="reset" class="btn btn-light me-3" data-kt-users-modal-action="cancel">Discard</button>
-																		<button type="submit" class="btn btn-primary" data-kt-users-modal-action="submit">
-																			<span class="indicator-label">Submit</span>
-																			<span class="indicator-progress">Please wait... 
-																			<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-																		</button>
-																	</div>
-																	<!--end::Actions-->
-																</form>
-																<!--end::Form-->
-															</div>
-															<!--end::Modal body-->
-														</div>
-														<!--end::Modal content-->
-													</div>
-													<!--end::Modal dialog-->
-												</div>
-												<!--end::Modal - New Card-->
-												<!--begin::Modal - Add task-->
-												<div class="modal fade" id="kt_modal_add_user" tabindex="-1" aria-hidden="true">
-													<!--begin::Modal dialog-->
-													<div class="modal-dialog modal-dialog-centered mw-650px">
-														<!--begin::Modal content-->
-														<div class="modal-content">
-															<!--begin::Modal header-->
-															<div class="modal-header" id="kt_modal_add_user_header">
-																<!--begin::Modal title-->
-																<h2 class="fw-bold">Add User</h2>
-																<!--end::Modal title-->
-																<!--begin::Close-->
-																<div class="btn btn-icon btn-sm btn-active-icon-primary" data-kt-users-modal-action="close">
-																	<i class="ki-duotone ki-cross fs-1">
-																		<span class="path1"></span>
-																		<span class="path2"></span>
-																	</i>
-																</div>
-																<!--end::Close-->
-															</div>
-															<!--end::Modal header-->
-															<!--begin::Modal body-->
-															<div class="modal-body px-5 my-7">
-																<!--begin::Form-->
-																<form id="kt_modal_add_user_form" class="form" action="#">
-																	<!--begin::Scroll-->
-																	<div class="d-flex flex-column scroll-y px-5 px-lg-10" id="kt_modal_add_user_scroll" data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_user_header" data-kt-scroll-wrappers="#kt_modal_add_user_scroll" data-kt-scroll-offset="300px">
-																		<!--begin::Input group-->
-																		<div class="fv-row mb-7">
-																			<!--begin::Label-->
-																			<label class="d-block fw-semibold fs-6 mb-5">Avatar</label>
-																			<!--end::Label-->
-																			<!--begin::Image placeholder-->
-																			<style>.image-input-placeholder { background-image: url(''); } [data-bs-theme="dark"] .image-input-placeholder { background-image: url(''); }</style>
-																			<!--end::Image placeholder-->
-																			<!--begin::Image input-->
-																			<div class="image-input image-input-outline image-input-placeholder" data-kt-image-input="true">
-																				<!--begin::Preview existing avatar-->
-																				<div class="image-input-wrapper w-125px h-125px" style="background-image: url(assets/media/avatars/300-6.jpg);"></div>
-																				<!--end::Preview existing avatar-->
-																				<!--begin::Label-->
-																				<label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
-																					<i class="ki-duotone ki-pencil fs-7">
-																						<span class="path1"></span>
-																						<span class="path2"></span>
-																					</i>
-																					<!--begin::Inputs-->
-																					<div inert>
-																						<input id="avatar" type="file" name="avatar" accept="image/*" />
-																					</div>
-																					<input type="hidden" name="avatar_remove" />
-																					<!--end::Inputs-->
-																				</label>
-																				<!--end::Label-->
-																				<!--begin::Cancel-->
-																				<span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
-																					<i class="ki-duotone ki-cross fs-2">
-																						<span class="path1"></span>
-																						<span class="path2"></span>
-																					</i>
-																				</span>
-																				<!--end::Cancel-->
-																				<!--begin::Remove-->
-																				<span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
-																					<i class="ki-duotone ki-cross fs-2">
-																						<span class="path1"></span>
-																						<span class="path2"></span>
-																					</i>
-																				</span>
-																				<!--end::Remove-->
-																			</div>
-																			<!--end::Image input-->
-																			<!--begin::Hint-->
-																			<div class="form-text">Allowed file types: png, jpg, jpeg.</div>
-																			<!--end::Hint-->
-																		</div>
-																		<!--end::Input group-->
-																		<!--begin::Input group-->
-																		<div class="fv-row mb-7">
-																			<!--begin::Label-->
-																			<label class="required fw-semibold fs-6 mb-2">Full Name</label>
-																			<!--end::Label-->
-																			<!--begin::Input-->
-																			<input id="username" type="text" name="user_name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Full name" value="Emma Smith" />
-																			<!--end::Input-->
-																		</div>
-																		<!--end::Input group-->
-																		<!--begin::Input group-->
-																		<div class="fv-row mb-7">
-																			<!--begin::Label-->
-																			<label class="required fw-semibold fs-6 mb-2">Email</label>
-																			<!--end::Label-->
-																			<!--begin::Input-->
-																			<input id="email" type="email" name="email" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="example@domain.com" value="smith@kpmg.com" />
-																			<!--end::Input-->
-																		</div>
-																		<!--end::Input group-->
-																		<!--begin::Input group-->
-																		<div class="fv-row mb-7">
-																			<!--begin::Label-->
-																			<label class="required fw-semibold fs-6 mb-2">Password</label>
-																			<!--end::Label-->
-																			<!--begin::Input-->
-																			<input id="password" type="password" name="password" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="" value="" />
-																			<!--end::Input-->
-																		</div>
-																		<!--end::Input group-->
-																		<!--begin::Input group-->
-																		<div class="mb-5">
-																			<!--begin::Label-->
-																			<label class="required fw-semibold fs-6 mb-5">Role</label>
-																			<!--end::Label-->
-																			<!--begin::Roles-->
-																			<!--begin::Input row-->
-																			<?php foreach($users[1] as $user): ?>
-																				<div class="d-flex fv-row">
-																					<div class="form-check form-check-custom form-check-solid">
-																						<input class="form-check-input me-3" name="user_role" type="radio" value="<?php echo $user['id']; ?>" data-role-name="<?php echo $user['role_name']; ?>" id="kt_modal_update_role_option_<?php echo $user['id']; ?>" />
-																						<label class="form-check-label" for="kt_modal_update_role_option_<?php echo $user['id']; ?>">
-																							<div class="fw-bold text-gray-800"><?php echo($user['role_name']); ?></div>
-																						</label>
-																					</div>
-																				</div>
-																				<div class='separator separator-dashed my-5'></div>
-																			<?php endforeach; ?>
-
-																			<!-- Hidden field to store role_name -->
-																			<input type="hidden" id="role_name" name="role_name" value="" />
-																		</div>
-																		<!--end::Input group-->
-																	</div>
-																	<!--end::Scroll-->
-																	<!--begin::Actions-->
-																	<div class="text-center pt-10">
-																		<button type="reset" class="btn btn-light me-3" data-kt-users-modal-action="cancel">Discard</button>
-																		<button id="create_user_m" type="submit" class="btn btn-primary" data-kt-users-modal-action="submit">
-																			<span class="indicator-label">Submit</span>
-																			<span class="indicator-progress">Please wait... 
-																			<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-																		</button>
-																	</div>
-																	<!--end::Actions-->
-																</form>
-																<!--end::Form-->
-															</div>
-															<!--end::Modal body-->
-														</div>
-														<!--end::Modal content-->
-													</div>
-													<!--end::Modal dialog-->
-												</div>
-												<!--end::Modal - Add task-->
-                                                <!--begin::Modal - Update user details-->
-                                                <div class="modal fade" id="kt_modal_update_details" tabindex="-1" aria-hidden="true">
-                                                    <!--begin::Modal dialog-->
-                                                    <div class="modal-dialog modal-dialog-centered mw-650px">
-                                                        <!--begin::Modal content-->
-                                                        <div class="modal-content">
-                                                            <!--begin::Form-->
-                                                            <form class="form" action="#" id="kt_modal_update_user_form">
-                                                                <!--begin::Modal header-->
-                                                                <div class="modal-header" id="kt_modal_update_user_header">
-                                                                    <!--begin::Modal title-->
-                                                                    <h2 class="fw-bold">Update User Details</h2>
-                                                                    <!--end::Modal title-->
-                                                                    <!--begin::Close-->
-                                                                    <div class="btn btn-icon btn-sm btn-active-icon-primary" data-kt-users-modal-action="close">
-                                                                        <i class="ki-duotone ki-cross fs-1">
-                                                                            <span class="path1"></span>
-                                                                            <span class="path2"></span>
-                                                                        </i>
-                                                                    </div>
-                                                                    <!--end::Close-->
-                                                                </div>
-                                                                <!--end::Modal header-->
-                                                                <!--begin::Modal body-->
-                                                                <div class="modal-body py-10 px-lg-17">
-                                                                    <!--begin::Scroll-->
-                                                                    <div class="d-flex flex-column scroll-y me-n7 pe-7" id="kt_modal_update_user_scroll" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_update_user_header" data-kt-scroll-wrappers="#kt_modal_update_user_scroll" data-kt-scroll-offset="300px">
-                                                                        <!--begin::User toggle-->
-                                                                        <div class="fw-bolder fs-3 rotate collapsible mb-7" data-bs-toggle="collapse" href="#kt_modal_update_user_user_info" role="button" aria-expanded="false" aria-controls="kt_modal_update_user_user_info">User Information 
-                                                                        <span class="ms-2 rotate-180">
-                                                                            <i class="ki-duotone ki-down fs-3"></i>
-                                                                        </span></div>
-                                                                        <!--end::User toggle-->
-                                                                        <!--begin::User form-->
-                                                                        <div id="kt_modal_update_user_user_info" class="collapse show">
-                                                                            <!--begin::Input group-->
-                                                                            <div class="mb-7">
-                                                                                <!--begin::Label-->
-                                                                                <label class="fs-6 fw-semibold mb-2">
-                                                                                    <span>Update Avatar</span>
-                                                                                    <span class="ms-1" data-bs-toggle="tooltip" title="Allowed file types: png, jpg, jpeg.">
-                                                                                        <i class="ki-duotone ki-information fs-7">
-                                                                                            <span class="path1"></span>
-                                                                                            <span class="path2"></span>
-                                                                                            <span class="path3"></span>
-                                                                                        </i>
-                                                                                    </span>
-                                                                                </label>
-                                                                                <!--end::Label-->
-                                                                                <!--begin::Image input wrapper-->
-                                                                                <div class="mt-1">
-                                                                                    <!--begin::Image placeholder-->
-                                                                                    <style>.image-input-placeholder { background-image: url(''); } [data-bs-theme="dark"] .image-input-placeholder { background-image: url('assets/media/svg/avatars/blank-dark.svg'); }</style>
-                                                                                    <!--end::Image placeholder-->
-                                                                                    <!--begin::Image input-->
-                                                                                    <div class="image-input image-input-outline image-input-placeholder" data-kt-image-input="true">
-                                                                                        <!--begin::Preview existing avatar-->
-                                                                                        <div class="image-input-wrapper w-125px h-125px" style="background-image: url(assets/media/avatars/300-6.jpg"></div>
-                                                                                        <!--end::Preview existing avatar-->
-                                                                                        <!--begin::Edit-->
-                                                                                        <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
-                                                                                            <i class="ki-duotone ki-pencil fs-7">
-                                                                                                <span class="path1"></span>
-                                                                                                <span class="path2"></span>
-                                                                                            </i>
-                                                                                            <!--begin::Inputs-->
-                                                                                            <input id="e_avatar" type="file" name="avatar" accept=".png, .jpg, .jpeg" />
-                                                                                            <input type="hidden" name="avatar_remove" />
-                                                                                            <!--end::Inputs-->
-                                                                                        </label>
-                                                                                        <!--end::Edit-->
-                                                                                        <!--begin::Cancel-->
-                                                                                        <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
-                                                                                            <i class="ki-duotone ki-cross fs-2">
-                                                                                                <span class="path1"></span>
-                                                                                                <span class="path2"></span>
-                                                                                            </i>
-                                                                                        </span>
-                                                                                        <!--end::Cancel-->
-                                                                                        <!--begin::Remove-->
-                                                                                        <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
-                                                                                            <i class="ki-duotone ki-cross fs-2">
-                                                                                                <span class="path1"></span>
-                                                                                                <span class="path2"></span>
-                                                                                            </i>
-                                                                                        </span>
-                                                                                        <!--end::Remove-->
-                                                                                    </div>
-                                                                                    <!--end::Image input-->
-                                                                                </div>
-                                                                                <!--end::Image input wrapper-->
-                                                                            </div>
-                                                                            <!--end::Input group-->
-                                                                            <!--begin::Input group-->
-                                                                            <div class="fv-row mb-7">
-                                                                                <!--begin::Label-->
-                                                                                <label class="fs-6 fw-semibold mb-2">Name</label>
-                                                                                <!--end::Label-->
-                                                                                <!--begin::Input-->
-                                                                                <input id="e_username" type="text" class="form-control form-control-solid" placeholder="" name="name" value="" />
-                                                                                <!--end::Input-->
-                                                                            </div>
-                                                                            <div class="fv-row mb-7">
-                                                                                <!--begin::Label-->
-                                                                                <label class="fs-6 fw-semibold mb-2">userId</label>
-                                                                                <!--end::Label-->
-                                                                                <!--begin::Input-->
-                                                                                <input id="e_id" type="text" class="form-control form-control-solid" placeholder="" name="name" value="" />
-                                                                                <!--end::Input-->
-                                                                            </div>
-                                                                            <div class="fv-row mb-7">
-                                                                                <!--begin::Label-->
-                                                                                <label class="fs-6 fw-semibold mb-2">role_id</label>
-                                                                                <!--end::Label-->
-                                                                                <!--begin::Input-->
-                                                                                <input id="e_role_id" type="text" class="form-control form-control-solid" placeholder="" name="name" value="" />
-                                                                                <!--end::Input-->
-                                                                            </div>
-                                                                            <!--end::Input group-->
-                                                                            <!--begin::Input group-->
-                                                                            <div class="fv-row mb-7">
-                                                                                <!--begin::Label-->
-                                                                                <label class="fs-6 fw-semibold mb-2">
-                                                                                    <span>Email</span>
-                                                                                    <span class="ms-1" data-bs-toggle="tooltip" title="Email address must be active">
-                                                                                        <i class="ki-duotone ki-information fs-7">
-                                                                                            <span class="path1"></span>
-                                                                                            <span class="path2"></span>
-                                                                                            <span class="path3"></span>
-                                                                                        </i>
-                                                                                    </span>
-                                                                                </label>
-                                                                                <!--end::Label-->
-                                                                                <!--begin::Input-->
-                                                                                <input id="e_email" type="email" class="form-control form-control-solid" placeholder="" name="email" value="" />
-                                                                                <!--end::Input-->
-                                                                            </div>
-                                                                            <!--end::Input group-->
-                                                                            
-                                                                            
-                                                                        </div>
-                                                                        <!--end::User form-->
-                                                                    </div>
-                                                                    <!--end::Scroll-->
-                                                                </div>
-                                                                <!--end::Modal body-->
-                                                                <!--begin::Modal footer-->
-                                                                <div class="modal-footer flex-center">
-                                                                    <!--begin::Button-->
-                                                                    <button type="reset" class="btn btn-light me-3" data-kt-users-modal-action="cancel">Discard</button>
-                                                                    <!--end::Button-->
-                                                                    <!--begin::Button-->
-                                                                    <button id="e_edit" type="submit" class="btn btn-primary" data-kt-users-modal-action="submit">
-                                                                        <span class="indicator-label">Submit</span>
-                                                                        <span class="indicator-progress">Please wait... 
-                                                                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-                                                                    </button>
-                                                                    <!--end::Button-->
-                                                                </div>
-                                                                <!--end::Modal footer-->
-                                                            </form>
-                                                            <!--end::Form-->
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!--end::Modal - Update user details-->
+												<!--begin::Button-->
+												<button type="button" class="btn btn-light-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_permission">
+												<i class="ki-duotone ki-plus-square fs-3">
+													<span class="path1"></span>
+													<span class="path2"></span>
+													<span class="path3"></span>
+												</i>Add Permission</button>
+												<!--end::Button-->
 											</div>
 											<!--end::Card toolbar-->
 										</div>
 										<!--end::Card header-->
 										<!--begin::Card body-->
-										<div class="card-body py-4">
+										<div class="card-body pt-0">
 											<!--begin::Table-->
-											<table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_users">
+											<table class="table align-middle table-row-dashed fs-6 gy-5 mb-0" id="kt_permissions_table">
 												<thead>
-													<tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
-														<th class="w-10px pe-2">
-															<div class="form-check form-check-sm form-check-custom form-check-solid me-3">
-																<input class="form-check-input" type="checkbox" data-kt-check="true" data-kt-check-target="#kt_table_users .form-check-input" value="1" />
-															</div>
-														</th>
-														<th class="min-w-125px">User Id</th>
-														<th class="min-w-125px">User</th>
-														<th class="min-w-125px">Role</th>
-														<th class="min-w-125px">User Email</th>
-														<th class="min-w-125px">Joined Date</th>
+													<tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
+														<th class="min-w-125px">Name</th>
+														<th class="min-w-250px">Assigned to</th>
+														<th class="min-w-125px">Created Date</th>
 														<th class="text-end min-w-100px">Actions</th>
 													</tr>
 												</thead>
-												<tbody class="text-gray-600 fw-semibold">
-                                                    <?php if (!empty($users) && is_array($users)): ?>
-                                                        <?php foreach ($users[0] as $user): ?>
-                                                            <?php if (is_array($user)): // Ensure $user is an array ?>
-                                                                <tr>
-                                                                    <td>
-                                                                        <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                                                            <input class="form-check-input" type="checkbox" value="1" />
-                                                                        </div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <?php echo htmlspecialchars($user['id']); ?>
-                                                                    </td>
-                                                                    <td class="d-flex align-items-center">
-                                                                        <!--begin:: Avatar -->
-                                                                        <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
-                                                                            <a href="">
-                                                                                <div class="symbol-label">
-																					<img src="<?php echo htmlspecialchars('http://localhost:3000/uploads/' . $user['avatar']); ?>" alt="Avatar" class="w-100" />
-                                                                                </div>
-                                                                            </a>
-                                                                        </div>
-                                                                        <!--end::Avatar-->
-                                                                        <!--begin::User details-->
-                                                                        <div class="d-flex flex-column">
-                                                                            <a href="user-management/users/view.php?id=<?php echo htmlspecialchars($user['id']); ?>" class="text-gray-800 text-hover-primary mb-1"><?php echo htmlspecialchars($user['username']); ?></a>
-                                                                            
-                                                                        </div>
-                                                                        <!--begin::User details-->
-                                                                    </td>
-                                                                    <td>
-                                                                        <?php 
-                                                                            echo htmlspecialchars($user['role_name']); 
-                                                                        ?>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="badge badge-light fw-bold"><?php echo htmlspecialchars($user['email']); ?></div>
-                                                                    </td>
-                                                                    
-                                                                    <td><?php echo htmlspecialchars($user['created_at']); ?></td>
-                                                                    <td class="text-end">
-                                                                        <a href="#" class="btn btn-light btn-active-light-primary btn-flex btn-center btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions 
-                                                                        <i class="ki-duotone ki-down fs-5 ms-1"></i></a>
-                                                                        <!--begin::Menu-->
-                                                                        <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4" data-kt-menu="true">
-                                                                            <!--begin::Menu item-->
-                                                                            <div class="menu-item px-3">
-                                                                                <a id="editUserbutton" href="#" class="menu-link px-3" data-bs-toggle="modal" data-bs-target="#kt_modal_update_details" data-user-id="<?php echo htmlspecialchars($user['id']); ?>">Edit</a>
-                                                                            </div>
-                                                                            <!--end::Menu item-->
-                                                                            <!--begin::Menu item-->
-                                                                            <div class="menu-item px-3">
-                                                                                <a href="#" class="menu-link px-3 deleteUserButton" data-kt-users-table-filter="delete_row" data-user-id="<?php echo htmlspecialchars($user['id']); ?>">Delete</a>
-                                                                            </div>
-                                                                            <!--end::Menu item-->
-                                                                        </div>
-                                                                        <!--end::Menu-->
-                                                                    </td>
-													            </tr>
-                                                            <?php endif; ?>
-                                                        <?php endforeach; ?>
-                                                    <?php else: ?>
-                                                        <tr>
-                                                            <td colspan="7" class="text-center">No users found.</td>
-                                                        </tr>
-                                                    <?php endif; ?>
-                                                </tbody>
+												<tbody class="fw-semibold text-gray-600">
+													<?php foreach ($permissions[1] as $management => $roles): ?>
+													<tr>
+														<td class="changed_to">
+															<?php echo($management); ?>
+														</td>
+														<td>
+															<?php foreach ($roles as $role_name): ?>
+																<p class="badge badge-light-primary fs-7 m-1"><?php echo htmlspecialchars($role_name); ?></p>
+															<?php endforeach; ?>
+														</td>
+														<td>
+															<?php echo($permissions[2]);?>
+														</td>
+														<td class="text-end">
+															<button id="edit_permission" class="btn btn-icon btn-active-light-primary w-30px h-30px me-3" data-bs-toggle="modal" data-bs-target="#kt_modal_update_permission">
+																<i class="ki-duotone ki-setting-3 fs-3">
+																	<span class="path1"></span>
+																	<span class="path2"></span>
+																	<span class="path3"></span>
+																	<span class="path4"></span>
+																	<span class="path5"></span>
+																</i>
+															</button>
+															<button id="del_permission" class="btn btn-icon btn-active-light-primary w-30px h-30px" data-kt-permissions-table-filter="delete_row">
+																<i class="ki-duotone ki-trash fs-3">
+																	<span class="path1"></span>
+																	<span class="path2"></span>
+																	<span class="path3"></span>
+																	<span class="path4"></span>
+																	<span class="path5"></span>
+																</i>
+															</button>
+														</td>
+													</tr>
+													<?php endforeach; ?>
+												</tbody>
 											</table>
 											<!--end::Table-->
 										</div>
 										<!--end::Card body-->
 									</div>
 									<!--end::Card-->
+									<!--begin::Modals-->
+									<!--begin::Modal - Add permissions-->
+									<div class="modal fade" id="kt_modal_add_permission" tabindex="-1" aria-hidden="true">
+										<!--begin::Modal dialog-->
+										<div class="modal-dialog modal-dialog-centered mw-650px">
+											<!--begin::Modal content-->
+											<div class="modal-content">
+												<!--begin::Modal header-->
+												<div class="modal-header">
+													<!--begin::Modal title-->
+													<h2 class="fw-bold">Add a Permission</h2>
+													<!--end::Modal title-->
+													<!--begin::Close-->
+													<div class="btn btn-icon btn-sm btn-active-icon-primary" data-kt-permissions-modal-action="close">
+														<i class="ki-duotone ki-cross fs-1">
+															<span class="path1"></span>
+															<span class="path2"></span>
+														</i>
+													</div>
+													<!--end::Close-->
+												</div>
+												<!--end::Modal header-->
+												<!--begin::Modal body-->
+												<div class="modal-body scroll-y mx-5 mx-xl-15 my-7">
+													<!--begin::Form-->
+													<form id="kt_modal_add_permission_form" class="form" action="#">
+														<!--begin::Input group-->
+														<div class="fv-row mb-7">
+															<!--begin::Label-->
+															<label class="fs-6 fw-semibold form-label mb-2">
+																<span class="required">Permission Name</span>
+																<span class="ms-2" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-html="true" data-bs-content="Permission names is required to be unique.">
+																	<i class="ki-duotone ki-information fs-7">
+																		<span class="path1"></span>
+																		<span class="path2"></span>
+																		<span class="path3"></span>
+																	</i>
+																</span>
+															</label>
+															<!--end::Label-->
+															<!--begin::Input-->
+															<input id="add_per" class="form-control form-control-solid" value="" placeholder="Enter a permission name" name="permission_name" />
+															<!--end::Input-->
+														</div>
+														<!--end::Input group-->
+														<!--begin::Actions-->
+														<div class="text-center pt-15">
+															<button type="reset" class="btn btn-light me-3" data-kt-permissions-modal-action="cancel">Discard</button>
+															<button id="add_permission" type="submit" class="btn btn-primary" data-kt-permissions-modal-action="submit">
+																<span class="indicator-label">Submit</span>
+																<span class="indicator-progress">Please wait... 
+																<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+															</button>
+														</div>
+														<!--end::Actions-->
+													</form>
+													<!--end::Form-->
+												</div>
+												<!--end::Modal body-->
+											</div>
+											<!--end::Modal content-->
+										</div>
+										<!--end::Modal dialog-->
+									</div>
+									<!--end::Modal - Add permissions-->
+									<!--begin::Modal - Update permissions-->
+									<div class="modal fade" id="kt_modal_update_permission" tabindex="-1" aria-hidden="true">
+										<!--begin::Modal dialog-->
+										<div class="modal-dialog modal-dialog-centered mw-650px">
+											<!--begin::Modal content-->
+											<div class="modal-content">
+												<!--begin::Modal header-->
+												<div class="modal-header">
+													<!--begin::Modal title-->
+													<h2 class="fw-bold">Update Permission</h2>
+													<!--end::Modal title-->
+													<!--begin::Close-->
+													<div class="btn btn-icon btn-sm btn-active-icon-primary" data-kt-permissions-modal-action="close">
+														<i class="ki-duotone ki-cross fs-1">
+															<span class="path1"></span>
+															<span class="path2"></span>
+														</i>
+													</div>
+													<!--end::Close-->
+												</div>
+												<!--end::Modal header-->
+												<!--begin::Modal body-->
+												<div class="modal-body scroll-y mx-5 mx-xl-15 my-7">
+													<!--begin::Notice-->
+													<!--begin::Notice-->
+													<div class="notice d-flex bg-light-warning rounded border-warning border border-dashed mb-9 p-6">
+														<!--begin::Icon-->
+														<i class="ki-duotone ki-information fs-2tx text-warning me-4">
+															<span class="path1"></span>
+															<span class="path2"></span>
+															<span class="path3"></span>
+														</i>
+														<!--end::Icon-->
+														<!--begin::Wrapper-->
+														<div class="d-flex flex-stack flex-grow-1">
+															<!--begin::Content-->
+															<div class="fw-semibold">
+																<div class="fs-6 text-gray-700">
+																<strong class="me-1">Warning!</strong>By editing the permission name, you might break the system permissions functionality. Please ensure you're absolutely certain before proceeding.</div>
+															</div>
+															<!--end::Content-->
+														</div>
+														<!--end::Wrapper-->
+													</div>
+													<!--end::Notice-->
+													<!--end::Notice-->
+													<!--begin::Form-->
+													<form id="kt_modal_update_permission_form" class="form" action="#">
+														<!--begin::Input group-->
+														<div class="fv-row mb-7">
+															<!--begin::Label-->
+															<label class="fs-6 fw-semibold form-label mb-2">
+																<span class="required">Permission Name</span>
+																<span class="ms-2" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-html="true" data-bs-content="Permission names is required to be unique.">
+																	<i class="ki-duotone ki-information fs-7">
+																		<span class="path1"></span>
+																		<span class="path2"></span>
+																		<span class="path3"></span>
+																	</i>
+																</span>
+															</label>
+															<!--end::Label-->
+															<!--begin::Input-->
+															<input id="edit_per" class="form-control form-control-solid" value="" placeholder="Enter a permission name" name="permission_name" />
+															<!--end::Input-->
+														</div>
+														<!--end::Input group-->
+														<!--begin::Actions-->
+														<div class="text-center pt-15">
+															<button type="reset" class="btn btn-light me-3" data-kt-permissions-modal-action="cancel">Discard</button>
+															<button id="edits_permission" type="submit" class="btn btn-primary" data-kt-permissions-modal-action="submit">
+																<span class="indicator-label">Submit</span>
+																<span class="indicator-progress">Please wait... 
+																<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+															</button>
+														</div>
+														<!--end::Actions-->
+													</form>
+													<!--end::Form-->
+												</div>
+												<!--end::Modal body-->
+											</div>
+											<!--end::Modal content-->
+										</div>
+										<!--end::Modal dialog-->
+									</div>
+									<!--end::Modal - Update permissions-->
+									<!--end::Modals-->
 								</div>
 								<!--end::Content container-->
 							</div>
@@ -10501,143 +10154,121 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 		<script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
 		<!--end::Vendors Javascript-->
 		<!--begin::Custom Javascript(used for this page only)-->
-        <script src="assets/js/custom/apps/user-management/users/view/view.js"></script>
-		<script src="assets/js/custom/apps/user-management/users/view/update-details.js"></script>
-		<script src="assets/js/custom/apps/user-management/users/list/table.js"></script>
-		<script src="assets/js/custom/apps/user-management/users/list/export-users.js"></script>
-		<script src="assets/js/custom/apps/user-management/users/list/add.js"></script>
+		<script src="assets/js/custom/apps/user-management/permissions/list.js"></script>
+		<script src="assets/js/custom/apps/user-management/permissions/add-permission.js"></script>
+		<script src="assets/js/custom/apps/user-management/permissions/update-permission.js"></script>
 		<script src="assets/js/widgets.bundle.js"></script>
 		<script src="assets/js/custom/widgets.js"></script>
 		<script src="assets/js/custom/apps/chat/chat.js"></script>
 		<script src="assets/js/custom/utilities/modals/upgrade-plan.js"></script>
 		<script src="assets/js/custom/utilities/modals/create-app.js"></script>
 		<script src="assets/js/custom/utilities/modals/users-search.js"></script>
-		<script src="js/script.js"></script>
+        
 		<!--end::Custom Javascript-->
 		<!--end::Javascript-->
-		
-		<script src="js/script.js"></script>
         <script>
-			document.getElementById('create_user_m').addEventListener('click', function() {
-				const username = document.getElementById('username').value;
-				const email = document.getElementById('email').value;
-				const password = document.getElementById('password').value;
-				const roleId = document.querySelector('input[name="user_role"]:checked').value;
-				const avatar = document.getElementById('avatar').files[0];
-
-				const formData = new FormData();
-				formData.append('username', username);
-				formData.append('email', email);
-				formData.append('password', password);
-				formData.append('roleId', roleId);
-				formData.append('avatar', avatar);
-				console.log(roleId);
+			document.addEventListener("DOMContentLoaded", function () {
+				const addPermissionButton = document.getElementById("add_permission");
+				const permissionInput = document.getElementById("add_per");
 				
-				async function createUser() {
-					try {
-						const response = await fetch('http://localhost:3000/users/create', {
-							method: 'POST',
-							body: formData, // No need for Content-Type header
-						});
+				// Attach event listener to the button
+				addPermissionButton.addEventListener("click", function (e) {
+					e.preventDefault(); // Prevent default form submission
+					
+					const permissionName = permissionInput.value.trim(); // Get the value of input field
 
-						if (!response.ok) {
-							throw new Error('Failed to create user');
-						}
-						const data = await response.json();
-						console.log('User created:', data);
-					} catch (error) {
-						console.error('Error during user creation:', error);
-						alert('An error occurred while processing your request.');
+					// Validate if permission name is not empty
+					if (!permissionName) {
+						return; // Stop if no permission name
 					}
-				}   
-				createUser();
+
+					// Show loading spinner and hide the submit text
+					const submitButton = addPermissionButton;
+					const indicatorLabel = submitButton.querySelector('.indicator-label');
+					const indicatorProgress = submitButton.querySelector('.indicator-progress');
+
+					indicatorLabel.style.display = 'none';
+					indicatorProgress.style.display = 'inline-block';
+
+					// Prepare the data to send
+					const data = {
+						permission_name: permissionName
+					};
+
+					// Send POST request to the server
+					fetch('http://localhost:3000/users/add_permission', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify(data)
+					})
+				});
+			});
+			document.addEventListener("DOMContentLoaded", function () {
+				// Attach click event listener to all delete buttons
+				document.querySelectorAll('#del_permission').forEach(function (button) {
+					button.addEventListener("click", function (e) {
+						e.preventDefault(); // Prevent any default behavior
+						
+						// Find the closest <tr> and get the first <td> which contains the management name
+						const managementName = this.closest('tr').querySelector('td:first-child').textContent.trim();
+							// Prepare data for the request
+							const data = {
+								permission_name: managementName
+							};
+							console.log(data);
+							
+							fetch('http://localhost:3000/users/del_permission', {
+								method: 'DELETE',
+								headers: {
+									'Content-Type': 'application/json'
+								},
+								body: JSON.stringify(data)
+							})
+					});
+				});
 			});
 
-            document.querySelectorAll('.deleteUserButton').forEach(button => {
-                button.addEventListener('click', function(event) {
-                    event.preventDefault(); // Prevent default link behavior
-
-                    const userId = this.getAttribute('data-user-id'); // Get the user ID from the data attribute
-                    console.log('User ID:', userId); // You can now use this ID in your logic
-
-                    
-                    // Get the parent <tr> element and remove it
-                    const row = this.closest('tr');
-                    if (row) {
-                        row.remove();
-                    }
-                    fetch(`http://localhost:3000/users/${userId}`, {
-                        method: 'DELETE',
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            console.log('User deleted successfully');
-                        } else {
-                            console.error('Failed to delete user:', response.statusText);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-                });
-            });
-
-            document.addEventListener('DOMContentLoaded', function() {
-                // Select all edit buttons
-                const editButtons = document.querySelectorAll('#editUserbutton');
-
-                editButtons.forEach(button => {
-                    button.addEventListener('click', function(event) {
-                        event.preventDefault(); // Prevent the default link behavior
-
-                        const userId = this.getAttribute('data-user-id'); // Get the user ID from the data attribute
-
-                        // Now you can use userId to populate your modal or perform other actions
-                        console.log('Editing user with ID:', userId);
-                        fetch(`http://localhost:3000/users/${userId}`, {
-                        method: 'GET',
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            return response.json(); // Parse the JSON from the response
-                        })
-                        .then(data => {
-                            // Now you can access the user data
-                            console.log('User data:', data.username);
-                            document.getElementById('e_id').value = data.id;
-                            document.getElementById('e_username').value = data.username;
-                            document.getElementById('e_email').value = data.email;
-                            document.getElementById('e_role_id').value = data.role_id;
-                        });
-                    });
-                });
-            });
-
-            document.getElementById('e_edit').addEventListener('click', function() {
-                const e_id = document.getElementById('e_id').value;
-                const e_username = document.getElementById('e_username').value;
-                const e_email = document.getElementById('e_email').value;
-                const e_role_id = document.getElementById('e_role_id').value;
-                const e_avatar = document.getElementById('e_avatar').files[0];
-
-				const formData = new FormData();
-				formData.append('id', e_id);
-				formData.append('username', e_username);
-				formData.append('email', e_email);
-				formData.append('roleId', e_role_id);
-				formData.append('avatar', e_avatar);
-
-				console.log(e_avatar);
+			document.addEventListener("DOMContentLoaded", function () {
+				// Get all edit buttons
+				const editButtons = document.querySelectorAll("#edit_permission");
 				
-                
-                fetch(`http://localhost:3000/users/${e_id}`, {
-                    method: 'PUT', // Use 'PATCH' if you want to update only specific fields
-                    body: formData, // Convert the data to JSON
-                })
-                
-            })
-        </script>
+				editButtons.forEach(button => {
+					button.addEventListener("click", function () {
+						// Get the management name from the corresponding <td>
+						const managementName = this.closest('tr').querySelector('td').textContent.trim();
+						
+						document.getElementById('edits_permission').addEventListener('click', () => {
+							const inputValue = document.getElementById('edit_per').value;
+							console.log(inputValue);
+							
+							fetch('http://localhost:3000/users/edit_permission', {
+								method: 'PUT', // Use PUT for updating
+								headers: {
+									'Content-Type': 'application/json'
+								},
+								body: JSON.stringify({ inputValue, management_name: managementName })
+							})
+							
+							// Select the <td> element in the closest <tr> to the button
+							const changedTd = this.closest('tr').querySelector('.changed_to');
+
+							// Change the text content of the <td> element to the input value
+							if (changedTd) {
+								changedTd.textContent = inputValue;
+							} else {
+								console.error('Element with class "changed_to" not found.');
+							}
+						});
+						
+					});
+				});
+			});
+
+			
+
+		</script>
+
 	</body>
 </html>

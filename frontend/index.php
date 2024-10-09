@@ -651,7 +651,7 @@
 																			<!--begin:Menu item-->
 																			<div class="menu-item p-0 m-0">
 																				<!--begin:Menu link-->
-																				<a href="pages/pricing/table.html" class="menu-link">
+																				<a href="pages/pricing/packages" class="menu-link">
 																					<span class="menu-title">Table Pricing</span>
 																				</a>
 																				<!--end:Menu link-->
@@ -2272,7 +2272,7 @@
 															<!--begin:Menu item-->
 															<div class="menu-item">
 																<!--begin:Menu link-->
-																<a class="menu-link" href="apps/user-management/roles/list.html">
+																<a class="menu-link" href="user-management/roles/list.php">
 																	<span class="menu-bullet">
 																		<span class="bullet bullet-dot"></span>
 																	</span>
@@ -2284,7 +2284,7 @@
 															<!--begin:Menu item-->
 															<div class="menu-item">
 																<!--begin:Menu link-->
-																<a class="menu-link" href="apps/user-management/roles/view.html">
+																<a class="menu-link" href="user-management/roles/view.php?id=1">
 																	<span class="menu-bullet">
 																		<span class="bullet bullet-dot"></span>
 																	</span>
@@ -2300,7 +2300,7 @@
 													<!--begin:Menu item-->
 													<div class="menu-item">
 														<!--begin:Menu link-->
-														<a class="menu-link" href="apps/user-management/permissions.html">
+														<a class="menu-link" href="user-management/users/permission.php">
 															<span class="menu-bullet">
 																<span class="bullet bullet-dot"></span>
 															</span>
@@ -5014,7 +5014,7 @@
 															<!--begin:Menu item-->
 															<div class="menu-item">
 																<!--begin:Menu link-->
-																<a class="menu-link" href="apps/user-management/users/view.html">
+																<a class="menu-link" href="user-management/users/view.php">
 																	<span class="menu-bullet">
 																		<span class="bullet bullet-dot"></span>
 																	</span>
@@ -5043,7 +5043,7 @@
 															<!--begin:Menu item-->
 															<div class="menu-item">
 																<!--begin:Menu link-->
-																<a class="menu-link" href="apps/user-management/roles/list.html">
+																<a class="menu-link" href="user-management/roles/list.php">
 																	<span class="menu-bullet">
 																		<span class="bullet bullet-dot"></span>
 																	</span>
@@ -5055,7 +5055,7 @@
 															<!--begin:Menu item-->
 															<div class="menu-item">
 																<!--begin:Menu link-->
-																<a class="menu-link" href="apps/user-management/roles/view.html">
+																<a class="menu-link" href="user-management/roles/view.php?id=1">
 																	<span class="menu-bullet">
 																		<span class="bullet bullet-dot"></span>
 																	</span>
@@ -5071,7 +5071,7 @@
 													<!--begin:Menu item-->
 													<div class="menu-item">
 														<!--begin:Menu link-->
-														<a class="menu-link active" href="apps/user-management/permissions.html">
+														<a class="menu-link active" href="user-management/users/permission.php">
 															<span class="menu-bullet">
 																<span class="bullet bullet-dot"></span>
 															</span>
@@ -5084,6 +5084,50 @@
 												<!--end:Menu sub-->
 											</div>
 										<!--end::Menu-->
+										<div data-kt-menu-trigger="click" class="menu-item here show menu-accordion">
+											<!--begin:Menu link-->
+											<span class="menu-link">
+												<span class="menu-icon">
+													<i class="ki-duotone ki-bucket fs-2">
+														<span class="path1"></span>
+														<span class="path2"></span>
+														<span class="path3"></span>
+														<span class="path4"></span>
+													</i>
+												</span>
+												<span class="menu-title">Pricing</span>
+												<span class="menu-arrow"></span>
+											</span>
+											<!--end:Menu link-->
+											<!--begin:Menu sub-->
+											<div class="menu-sub menu-sub-accordion menu-active-bg">
+												<!--begin:Menu item-->
+												<div class="menu-item">
+													<!--begin:Menu link-->
+													<a class="menu-link" href="pages/pricing.php">
+														<span class="menu-bullet">
+															<span class="bullet bullet-dot"></span>
+														</span>
+														<span class="menu-title">Column Pricing</span>
+													</a>
+													<!--end:Menu link-->
+												</div>
+												<!--end:Menu item-->
+												<!--begin:Menu item-->
+												<div class="menu-item">
+													<!--begin:Menu link-->
+													<a class="menu-link" href="pages/packages.php">
+														<span class="menu-bullet">
+															<span class="bullet bullet-dot"></span>
+														</span>
+														<span class="menu-title">Table Pricing</span>
+													</a>
+													<!--end:Menu link-->
+												</div>
+												<!--end:Menu item-->
+											</div>
+											<!--end:Menu sub-->
+										</div>
 									</div>
 								</div>
 								<!--end::Scroll wrapper-->
@@ -12226,7 +12270,6 @@
 				window.location.href = 'login.php'; // Redirect to login.php
 			});
 		</script>
-		<script src="js/script.js"></script>
 	</body>
 	<!--end::Body-->
 </html>

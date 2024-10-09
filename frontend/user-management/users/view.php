@@ -8,7 +8,8 @@ if (!isset($_SESSION['token'])) {
 
 // Fetch data from the backend using cURL
 $token = $_SESSION['token'];
-$ch = curl_init('http://localhost:3000/users'); // Replace with your actual users endpoint
+$id = $_GET['id'];
+$ch = curl_init('http://localhost:3000/users/' .$id); // Ensure this is the correct endpoint
 
 // Set the headers
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -19,7 +20,6 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, [
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
 $response = curl_exec($ch);
-
 // Check for cURL errors
 if (curl_errno($ch)) {
     echo 'Curl error: ' . curl_error($ch);
@@ -37,13 +37,19 @@ if (json_last_error() !== JSON_ERROR_NONE) {
     die('Error decoding JSON: ' . json_last_error_msg());
 }
 
+// Check if users were retrieved successfully
+if (isset($users['error'])) {
+    die('Error fetching users: ' . htmlspecialchars($users['error']));
+}
+
 // Debug output to inspect the structure of $users
 // echo '<pre>';
 // print_r($users);
 // echo '</pre>';
 // exit; // Stop execution for debugging
-
 ?>
+
+
 
 
 
@@ -702,7 +708,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 																			<!--begin:Menu item-->
 																			<div class="menu-item p-0 m-0">
 																				<!--begin:Menu link-->
-																				<a href="pages/pricing/packages.php" class="menu-link">
+																				<a href="pages/pricing/packages" class="menu-link">
 																					<span class="menu-title">Table Pricing</span>
 																				</a>
 																				<!--end:Menu link-->
@@ -749,7 +755,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 																			<!--begin:Menu item-->
 																			<div class="menu-item p-0 m-0">
 																				<!--begin:Menu link-->
-																				<a href="pages/social/settings.html" class="menu-link">
+																				<a href="user-management/users/setting.php?id=<?php echo($users['id']);?>" class="menu-link">
 																					<span class="menu-title">Settings</span>
 																				</a>
 																				<!--end:Menu link-->
@@ -794,7 +800,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 																		<!--begin:Menu item-->
 																		<div class="menu-item p-0 m-0">
 																			<!--begin:Menu link-->
-																			<a href="account/settings.html" class="menu-link">
+																			<a href="user-management/users/setting.php?id=<?php echo($users['id']);?>" class="menu-link">
 																				<span class="menu-title">Settings</span>
 																			</a>
 																			<!--end:Menu link-->
@@ -1290,7 +1296,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 																			<!--begin:Menu item-->
 																			<div class="menu-item p-0 m-0">
 																				<!--begin:Menu link-->
-																				<a href="user-management/users/view.php" class="menu-link">
+																				<a href="utilities/modals/general/view-users.html" class="menu-link">
 																					<span class="menu-title">View Users</span>
 																				</a>
 																				<!--end:Menu link-->
@@ -1786,7 +1792,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 													<!--begin:Menu item-->
 													<div class="menu-item">
 														<!--begin:Menu link-->
-														<a class="menu-link" href="apps/projects/settings.html">
+														<a class="menu-link" href="user-management/users/setting.php?id=<?php echo($users['id']);?>">
 															<span class="menu-bullet">
 																<span class="bullet bullet-dot"></span>
 															</span>
@@ -2087,7 +2093,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 													<!--begin:Menu item-->
 													<div class="menu-item">
 														<!--begin:Menu link-->
-														<a class="menu-link" href="apps/ecommerce/settings.html">
+														<a class="menu-link" href="user-management/users/setting.php?id=<?php echo($users['id']);?>">
 															<span class="menu-bullet">
 																<span class="bullet bullet-dot"></span>
 															</span>
@@ -2294,7 +2300,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 															<!--begin:Menu item-->
 															<div class="menu-item">
 																<!--begin:Menu link-->
-																<a class="menu-link" href="user-management/users/view.php">
+																<a class="menu-link" href="apps/user-management/users/view.html">
 																	<span class="menu-bullet">
 																		<span class="bullet bullet-dot"></span>
 																	</span>
@@ -2698,7 +2704,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 													<!--begin:Menu item-->
 													<div class="menu-item">
 														<!--begin:Menu link-->
-														<a class="menu-link" href="apps/file-manager/settings.html">
+														<a class="menu-link" href="user-management/users/setting.php?id=<?php echo($users['id']);?>">
 															<span class="menu-bullet">
 																<span class="bullet bullet-dot"></span>
 															</span>
@@ -4907,7 +4913,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 											<div class="menu-sub menu-sub-dropdown w-175px py-4">
 												<!--begin::Menu item-->
 												<div class="menu-item px-3">
-													<a href="account/settings.html" class="menu-link d-flex px-5 active">
+													<a href="user-management/users/setting.php?id=<?php echo($users['id']);?>" class="menu-link d-flex px-5 active">
 													<span class="symbol symbol-20px me-4">
 														<img class="rounded-1" src="assets/media/flags/united-states.svg" alt="" />
 													</span>English</a>
@@ -4915,7 +4921,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 												<!--end::Menu item-->
 												<!--begin::Menu item-->
 												<div class="menu-item px-3">
-													<a href="account/settings.html" class="menu-link d-flex px-5">
+													<a href="user-management/users/setting.php?id=<?php echo($users['id']);?>" class="menu-link d-flex px-5">
 													<span class="symbol symbol-20px me-4">
 														<img class="rounded-1" src="assets/media/flags/spain.svg" alt="" />
 													</span>Spanish</a>
@@ -4923,7 +4929,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 												<!--end::Menu item-->
 												<!--begin::Menu item-->
 												<div class="menu-item px-3">
-													<a href="account/settings.html" class="menu-link d-flex px-5">
+													<a href="user-management/users/setting.php?id=<?php echo($users['id']);?>" class="menu-link d-flex px-5">
 													<span class="symbol symbol-20px me-4">
 														<img class="rounded-1" src="assets/media/flags/germany.svg" alt="" />
 													</span>German</a>
@@ -4931,7 +4937,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 												<!--end::Menu item-->
 												<!--begin::Menu item-->
 												<div class="menu-item px-3">
-													<a href="account/settings.html" class="menu-link d-flex px-5">
+													<a href="user-management/users/setting.php?id=<?php echo($users['id']);?>" class="menu-link d-flex px-5">
 													<span class="symbol symbol-20px me-4">
 														<img class="rounded-1" src="assets/media/flags/japan.svg" alt="" />
 													</span>Japanese</a>
@@ -4939,7 +4945,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 												<!--end::Menu item-->
 												<!--begin::Menu item-->
 												<div class="menu-item px-3">
-													<a href="account/settings.html" class="menu-link d-flex px-5">
+													<a href="user-management/users/setting.php?id=<?php echo($users['id']);?>" class="menu-link d-flex px-5">
 													<span class="symbol symbol-20px me-4">
 														<img class="rounded-1" src="assets/media/flags/france.svg" alt="" />
 													</span>French</a>
@@ -5065,7 +5071,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 															<!--begin:Menu item-->
 															<div class="menu-item">
 																<!--begin:Menu link-->
-																<a class="menu-link" href="user-management/users/view.php">
+																<a class="menu-link" href="apps/user-management/users/view.html">
 																	<span class="menu-bullet">
 																		<span class="bullet bullet-dot"></span>
 																	</span>
@@ -5210,7 +5216,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 									<!--begin::Page title-->
 									<div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
 										<!--begin::Title-->
-										<h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Users List</h1>
+										<h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Account Overview</h1>
 										<!--end::Title-->
 										<!--begin::Breadcrumb-->
 										<ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
@@ -5225,15 +5231,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 											</li>
 											<!--end::Item-->
 											<!--begin::Item-->
-											<li class="breadcrumb-item text-muted">User Management</li>
-											<!--end::Item-->
-											<!--begin::Item-->
-											<li class="breadcrumb-item">
-												<span class="bullet bg-gray-500 w-5px h-2px"></span>
-											</li>
-											<!--end::Item-->
-											<!--begin::Item-->
-											<li class="breadcrumb-item text-muted">Users</li>
+											<li class="breadcrumb-item text-muted">Account</li>
 											<!--end::Item-->
 										</ul>
 										<!--end::Breadcrumb-->
@@ -5251,7 +5249,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 											</i>Filter</a>
 											<!--end::Menu toggle-->
 											<!--begin::Menu 1-->
-											<div class="menu menu-sub menu-sub-dropdown w-250px w-md-300px" data-kt-menu="true" id="kt_menu_66b9705d7a500">
+											<div class="menu menu-sub menu-sub-dropdown w-250px w-md-300px" data-kt-menu="true" id="kt_menu_66b9706166d83">
 												<!--begin::Header-->
 												<div class="px-7 py-5">
 													<div class="fs-5 text-gray-900 fw-bold">Filter Options</div>
@@ -5269,7 +5267,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 														<!--end::Label-->
 														<!--begin::Input-->
 														<div>
-															<select class="form-select form-select-solid" multiple="multiple" data-kt-select2="true" data-close-on-select="false" data-placeholder="Select option" data-dropdown-parent="#kt_menu_66b9705d7a500" data-allow-clear="true">
+															<select class="form-select form-select-solid" multiple="multiple" data-kt-select2="true" data-close-on-select="false" data-placeholder="Select option" data-dropdown-parent="#kt_menu_66b9706166d83" data-allow-clear="true">
 																<option></option>
 																<option value="1">Approved</option>
 																<option value="2">Pending</option>
@@ -5343,590 +5341,428 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 							<div id="kt_app_content" class="app-content flex-column-fluid">
 								<!--begin::Content container-->
 								<div id="kt_app_content_container" class="app-container container-xxl">
-									<!--begin::Card-->
-									<div class="card">
-										<!--begin::Card header-->
-										<div class="card-header border-0 pt-6">
-											<!--begin::Card title-->
-											<div class="card-title">
-												<!--begin::Search-->
-												<div class="d-flex align-items-center position-relative my-1">
-													<i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
-														<span class="path1"></span>
-														<span class="path2"></span>
-													</i>
-													<input type="text" data-kt-user-table-filter="search" class="form-control form-control-solid w-250px ps-13" placeholder="Search user" />
-												</div>
-												<!--end::Search-->
-											</div>
-											<!--begin::Card title-->
-											<!--begin::Card toolbar-->
-											<div class="card-toolbar">
-												<!--begin::Toolbar-->
-												<div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
-													<!--begin::Filter-->
-													<button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-													<i class="ki-duotone ki-filter fs-2">
-														<span class="path1"></span>
-														<span class="path2"></span>
-													</i>Filter</button>
-													<!--begin::Menu 1-->
-													<div class="menu menu-sub menu-sub-dropdown w-300px w-md-325px" data-kt-menu="true">
-														<!--begin::Header-->
-														<div class="px-7 py-5">
-															<div class="fs-5 text-gray-900 fw-bold">Filter Options</div>
-														</div>
-														<!--end::Header-->
-														<!--begin::Separator-->
-														<div class="separator border-gray-200"></div>
-														<!--end::Separator-->
-														<!--begin::Content-->
-														<div class="px-7 py-5" data-kt-user-table-filter="form">
-															<!--begin::Input group-->
-															<div class="mb-10">
-																<label class="form-label fs-6 fw-semibold">Role:</label>
-																<select class="form-select form-select-solid fw-bold" data-kt-select2="true" data-placeholder="Select option" data-allow-clear="true" data-kt-user-table-filter="role" data-hide-search="true">
-																	<option></option>
-																	<option value="Administrator">Administrator</option>
-																	<option value="Analyst">Analyst</option>
-																	<option value="Developer">Developer</option>
-																	<option value="Support">Support</option>
-																	<option value="Trial">Trial</option>
-																</select>
-															</div>
-															<!--end::Input group-->
-															<!--begin::Input group-->
-															<div class="mb-10">
-																<label class="form-label fs-6 fw-semibold">Two Step Verification:</label>
-																<select class="form-select form-select-solid fw-bold" data-kt-select2="true" data-placeholder="Select option" data-allow-clear="true" data-kt-user-table-filter="two-step" data-hide-search="true">
-																	<option></option>
-																	<option value="Enabled">Enabled</option>
-																</select>
-															</div>
-															<!--end::Input group-->
-															<!--begin::Actions-->
-															<div class="d-flex justify-content-end">
-																<button type="reset" class="btn btn-light btn-active-light-primary fw-semibold me-2 px-6" data-kt-menu-dismiss="true" data-kt-user-table-filter="reset">Reset</button>
-																<button type="submit" class="btn btn-primary fw-semibold px-6" data-kt-menu-dismiss="true" data-kt-user-table-filter="filter">Apply</button>
-															</div>
-															<!--end::Actions-->
-														</div>
-														<!--end::Content-->
+									<!--begin::Navbar-->
+									<div class="card mb-5 mb-xl-10">
+										<div class="card-body pt-9 pb-0">
+											<!--begin::Details-->
+											<div class="d-flex flex-wrap flex-sm-nowrap">
+												<!--begin: Pic-->
+												<div class="me-7 mb-4">
+													<div class="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative">
+														<img src="<?php echo htmlspecialchars('http://localhost:3000/uploads/' . $users['avatar']); ?>" alt="image" />
+														<div class="position-absolute translate-middle bottom-0 start-100 mb-6 bg-success rounded-circle border border-4 border-body h-20px w-20px"></div>
 													</div>
-													<!--end::Menu 1-->
-													<!--end::Filter-->
-													<!--begin::Export-->
-													<button type="button" class="btn btn-light-primary me-3" data-bs-toggle="modal" data-bs-target="#kt_modal_export_users">
-													<i class="ki-duotone ki-exit-up fs-2">
-														<span class="path1"></span>
-														<span class="path2"></span>
-													</i>Export</button>
-													<!--end::Export-->
-													<!--begin::Add user-->
-													<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_user">
-													<i class="ki-duotone ki-plus fs-2"></i>Add User</button>
-													<!--end::Add user-->
 												</div>
-												<!--end::Toolbar-->
-												<!--begin::Group actions-->
-												<div class="d-flex justify-content-end align-items-center d-none" data-kt-user-table-toolbar="selected">
-													<div class="fw-bold me-5">
-													<span class="me-2" data-kt-user-table-select="selected_count"></span>Selected</div>
-													<button type="button" class="btn btn-danger" data-kt-user-table-select="delete_selected">Delete Selected</button>
-												</div>
-												<!--end::Group actions-->
-												<!--begin::Modal - Adjust Balance-->
-												<div class="modal fade" id="kt_modal_export_users" tabindex="-1" aria-hidden="true">
-													<!--begin::Modal dialog-->
-													<div class="modal-dialog modal-dialog-centered mw-650px">
-														<!--begin::Modal content-->
-														<div class="modal-content">
-															<!--begin::Modal header-->
-															<div class="modal-header">
-																<!--begin::Modal title-->
-																<h2 class="fw-bold">Export Users</h2>
-																<!--end::Modal title-->
-																<!--begin::Close-->
-																<div class="btn btn-icon btn-sm btn-active-icon-primary" data-kt-users-modal-action="close">
-																	<i class="ki-duotone ki-cross fs-1">
+												<!--end::Pic-->
+												<!--begin::Info-->
+												<div class="flex-grow-1">
+													<!--begin::Title-->
+													<div class="d-flex justify-content-between align-items-start flex-wrap mb-2">
+														<!--begin::User-->
+														<div class="d-flex flex-column">
+															<!--begin::Name-->
+															<div class="d-flex align-items-center mb-2">
+																<a href="#" class="text-gray-900 text-hover-primary fs-2 fw-bold me-1"><?php echo ($users['username']);?></a>
+																<a href="#">
+																	<i class="ki-duotone ki-verify fs-1 text-primary">
 																		<span class="path1"></span>
 																		<span class="path2"></span>
 																	</i>
-																</div>
-																<!--end::Close-->
+																</a>
 															</div>
-															<!--end::Modal header-->
-															<!--begin::Modal body-->
-															<div class="modal-body scroll-y mx-5 mx-xl-15 my-7">
-																<!--begin::Form-->
-																<form id="kt_modal_export_users_form" class="form" action="#">
-																	<!--begin::Input group-->
-																	<div class="fv-row mb-10">
-																		<!--begin::Label-->
-																		<label class="fs-6 fw-semibold form-label mb-2">Select Roles:</label>
-																		<!--end::Label-->
-																		<!--begin::Input-->
-																		<select name="role" data-control="select2" data-placeholder="Select a role" data-hide-search="true" class="form-select form-select-solid fw-bold">
-																			<option></option>
-																			<option value="Administrator">Administrator</option>
-																			<option value="Analyst">Analyst</option>
-																			<option value="Developer">Developer</option>
-																			<option value="Support">Support</option>
-																			<option value="Trial">Trial</option>
-																		</select>
-																		<!--end::Input-->
-																	</div>
-																	<!--end::Input group-->
-																	<!--begin::Input group-->
-																	<div class="fv-row mb-10">
-																		<!--begin::Label-->
-																		<label class="required fs-6 fw-semibold form-label mb-2">Select Export Format:</label>
-																		<!--end::Label-->
-																		<!--begin::Input-->
-																		<select name="format" data-control="select2" data-placeholder="Select a format" data-hide-search="true" class="form-select form-select-solid fw-bold">
-																			<option></option>
-																			<option value="excel">Excel</option>
-																			<option value="pdf">PDF</option>
-																			<option value="cvs">CVS</option>
-																			<option value="zip">ZIP</option>
-																		</select>
-																		<!--end::Input-->
-																	</div>
-																	<!--end::Input group-->
-																	<!--begin::Actions-->
-																	<div class="text-center">
-																		<button type="reset" class="btn btn-light me-3" data-kt-users-modal-action="cancel">Discard</button>
-																		<button type="submit" class="btn btn-primary" data-kt-users-modal-action="submit">
-																			<span class="indicator-label">Submit</span>
-																			<span class="indicator-progress">Please wait... 
-																			<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-																		</button>
-																	</div>
-																	<!--end::Actions-->
-																</form>
-																<!--end::Form-->
+															<!--end::Name-->
+															<!--begin::Info-->
+															<div class="d-flex flex-wrap fw-semibold fs-6 mb-4 pe-2">
+																<a href="#" class="d-flex align-items-center text-gray-500 text-hover-primary me-5 mb-2">
+																<i class="ki-duotone ki-profile-circle fs-4 me-1">
+																	<span class="path1"></span>
+																	<span class="path2"></span>
+																	<span class="path3"></span>
+																</i><?php echo($users['role_name']);?></a>
+																
+																<a href="#" class="d-flex align-items-center text-gray-500 text-hover-primary mb-2">
+																<i class="ki-duotone ki-sms fs-4">
+																	<span class="path1"></span>
+																	<span class="path2"></span>
+																</i><?php echo($users['email']);?></a>
 															</div>
-															<!--end::Modal body-->
+															<!--end::Info-->
 														</div>
-														<!--end::Modal content-->
-													</div>
-													<!--end::Modal dialog-->
-												</div>
-												<!--end::Modal - New Card-->
-												<!--begin::Modal - Add task-->
-												<div class="modal fade" id="kt_modal_add_user" tabindex="-1" aria-hidden="true">
-													<!--begin::Modal dialog-->
-													<div class="modal-dialog modal-dialog-centered mw-650px">
-														<!--begin::Modal content-->
-														<div class="modal-content">
-															<!--begin::Modal header-->
-															<div class="modal-header" id="kt_modal_add_user_header">
-																<!--begin::Modal title-->
-																<h2 class="fw-bold">Add User</h2>
-																<!--end::Modal title-->
-																<!--begin::Close-->
-																<div class="btn btn-icon btn-sm btn-active-icon-primary" data-kt-users-modal-action="close">
-																	<i class="ki-duotone ki-cross fs-1">
-																		<span class="path1"></span>
-																		<span class="path2"></span>
-																	</i>
-																</div>
-																<!--end::Close-->
-															</div>
-															<!--end::Modal header-->
-															<!--begin::Modal body-->
-															<div class="modal-body px-5 my-7">
-																<!--begin::Form-->
-																<form id="kt_modal_add_user_form" class="form" action="#">
-																	<!--begin::Scroll-->
-																	<div class="d-flex flex-column scroll-y px-5 px-lg-10" id="kt_modal_add_user_scroll" data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_user_header" data-kt-scroll-wrappers="#kt_modal_add_user_scroll" data-kt-scroll-offset="300px">
-																		<!--begin::Input group-->
-																		<div class="fv-row mb-7">
-																			<!--begin::Label-->
-																			<label class="d-block fw-semibold fs-6 mb-5">Avatar</label>
-																			<!--end::Label-->
-																			<!--begin::Image placeholder-->
-																			<style>.image-input-placeholder { background-image: url(''); } [data-bs-theme="dark"] .image-input-placeholder { background-image: url(''); }</style>
-																			<!--end::Image placeholder-->
-																			<!--begin::Image input-->
-																			<div class="image-input image-input-outline image-input-placeholder" data-kt-image-input="true">
-																				<!--begin::Preview existing avatar-->
-																				<div class="image-input-wrapper w-125px h-125px" style="background-image: url(assets/media/avatars/300-6.jpg);"></div>
-																				<!--end::Preview existing avatar-->
-																				<!--begin::Label-->
-																				<label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
-																					<i class="ki-duotone ki-pencil fs-7">
-																						<span class="path1"></span>
-																						<span class="path2"></span>
-																					</i>
-																					<!--begin::Inputs-->
-																					<div inert>
-																						<input id="avatar" type="file" name="avatar" accept="image/*" />
-																					</div>
-																					<input type="hidden" name="avatar_remove" />
-																					<!--end::Inputs-->
-																				</label>
-																				<!--end::Label-->
-																				<!--begin::Cancel-->
-																				<span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
-																					<i class="ki-duotone ki-cross fs-2">
-																						<span class="path1"></span>
-																						<span class="path2"></span>
-																					</i>
-																				</span>
-																				<!--end::Cancel-->
-																				<!--begin::Remove-->
-																				<span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
-																					<i class="ki-duotone ki-cross fs-2">
-																						<span class="path1"></span>
-																						<span class="path2"></span>
-																					</i>
-																				</span>
-																				<!--end::Remove-->
+														<!--end::User-->
+														<!--begin::Actions-->
+														<div class="d-flex my-4">
+															<a href="#" class="btn btn-sm btn-light me-2" id="kt_user_follow_button">
+																<i class="ki-duotone ki-check fs-3 d-none"></i>
+																<!--begin::Indicator label-->
+																<span class="indicator-label">Follow</span>
+																<!--end::Indicator label-->
+																<!--begin::Indicator progress-->
+																<span class="indicator-progress">Please wait... 
+																<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+																<!--end::Indicator progress-->
+															</a>
+															<a href="#" class="btn btn-sm btn-primary me-3" data-bs-toggle="modal" data-bs-target="#kt_modal_offer_a_deal">Hire Me</a>
+															<!--begin::Menu-->
+															<div class="me-0">
+																<button class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+																	<i class="ki-solid ki-dots-horizontal fs-2x"></i>
+																</button>
+																<!--begin::Menu 3-->
+																<div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-semibold w-200px py-3" data-kt-menu="true">
+																	<!--begin::Heading-->
+																	<div class="menu-item px-3">
+																		<div class="menu-content text-muted pb-2 px-3 fs-7 text-uppercase">Payments</div>
+																	</div>
+																	<!--end::Heading-->
+																	<!--begin::Menu item-->
+																	<div class="menu-item px-3">
+																		<a href="#" class="menu-link px-3">Create Invoice</a>
+																	</div>
+																	<!--end::Menu item-->
+																	<!--begin::Menu item-->
+																	<div class="menu-item px-3">
+																		<a href="#" class="menu-link flex-stack px-3">Create Payment 
+																		<span class="ms-2" data-bs-toggle="tooltip" title="Specify a target name for future usage and reference">
+																			<i class="ki-duotone ki-information fs-6">
+																				<span class="path1"></span>
+																				<span class="path2"></span>
+																				<span class="path3"></span>
+																			</i>
+																		</span></a>
+																	</div>
+																	<!--end::Menu item-->
+																	<!--begin::Menu item-->
+																	<div class="menu-item px-3">
+																		<a href="#" class="menu-link px-3">Generate Bill</a>
+																	</div>
+																	<!--end::Menu item-->
+																	<!--begin::Menu item-->
+																	<div class="menu-item px-3" data-kt-menu-trigger="hover" data-kt-menu-placement="right-end">
+																		<a href="#" class="menu-link px-3">
+																			<span class="menu-title">Subscription</span>
+																			<span class="menu-arrow"></span>
+																		</a>
+																		<!--begin::Menu sub-->
+																		<div class="menu-sub menu-sub-dropdown w-175px py-4">
+																			<!--begin::Menu item-->
+																			<div class="menu-item px-3">
+																				<a href="#" class="menu-link px-3">Plans</a>
 																			</div>
-																			<!--end::Image input-->
-																			<!--begin::Hint-->
-																			<div class="form-text">Allowed file types: png, jpg, jpeg.</div>
-																			<!--end::Hint-->
-																		</div>
-																		<!--end::Input group-->
-																		<!--begin::Input group-->
-																		<div class="fv-row mb-7">
-																			<!--begin::Label-->
-																			<label class="required fw-semibold fs-6 mb-2">Full Name</label>
-																			<!--end::Label-->
-																			<!--begin::Input-->
-																			<input id="username" type="text" name="user_name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Full name" value="Emma Smith" />
-																			<!--end::Input-->
-																		</div>
-																		<!--end::Input group-->
-																		<!--begin::Input group-->
-																		<div class="fv-row mb-7">
-																			<!--begin::Label-->
-																			<label class="required fw-semibold fs-6 mb-2">Email</label>
-																			<!--end::Label-->
-																			<!--begin::Input-->
-																			<input id="email" type="email" name="email" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="example@domain.com" value="smith@kpmg.com" />
-																			<!--end::Input-->
-																		</div>
-																		<!--end::Input group-->
-																		<!--begin::Input group-->
-																		<div class="fv-row mb-7">
-																			<!--begin::Label-->
-																			<label class="required fw-semibold fs-6 mb-2">Password</label>
-																			<!--end::Label-->
-																			<!--begin::Input-->
-																			<input id="password" type="password" name="password" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="" value="" />
-																			<!--end::Input-->
-																		</div>
-																		<!--end::Input group-->
-																		<!--begin::Input group-->
-																		<div class="mb-5">
-																			<!--begin::Label-->
-																			<label class="required fw-semibold fs-6 mb-5">Role</label>
-																			<!--end::Label-->
-																			<!--begin::Roles-->
-																			<!--begin::Input row-->
-																			<?php foreach($users[1] as $user): ?>
-																				<div class="d-flex fv-row">
-																					<div class="form-check form-check-custom form-check-solid">
-																						<input class="form-check-input me-3" name="user_role" type="radio" value="<?php echo $user['id']; ?>" data-role-name="<?php echo $user['role_name']; ?>" id="kt_modal_update_role_option_<?php echo $user['id']; ?>" />
-																						<label class="form-check-label" for="kt_modal_update_role_option_<?php echo $user['id']; ?>">
-																							<div class="fw-bold text-gray-800"><?php echo($user['role_name']); ?></div>
-																						</label>
-																					</div>
+																			<!--end::Menu item-->
+																			<!--begin::Menu item-->
+																			<div class="menu-item px-3">
+																				<a href="#" class="menu-link px-3">Billing</a>
+																			</div>
+																			<!--end::Menu item-->
+																			<!--begin::Menu item-->
+																			<div class="menu-item px-3">
+																				<a href="#" class="menu-link px-3">Statements</a>
+																			</div>
+																			<!--end::Menu item-->
+																			<!--begin::Menu separator-->
+																			<div class="separator my-2"></div>
+																			<!--end::Menu separator-->
+																			<!--begin::Menu item-->
+																			<div class="menu-item px-3">
+																				<div class="menu-content px-3">
+																					<!--begin::Switch-->
+																					<label class="form-check form-switch form-check-custom form-check-solid">
+																						<!--begin::Input-->
+																						<input class="form-check-input w-30px h-20px" type="checkbox" value="1" checked="checked" name="notifications" />
+																						<!--end::Input-->
+																						<!--end::Label-->
+																						<span class="form-check-label text-muted fs-6">Recuring</span>
+																						<!--end::Label-->
+																					</label>
+																					<!--end::Switch-->
 																				</div>
-																				<div class='separator separator-dashed my-5'></div>
-																			<?php endforeach; ?>
-
-																			<!-- Hidden field to store role_name -->
-																			<input type="hidden" id="role_name" name="role_name" value="" />
+																			</div>
+																			<!--end::Menu item-->
 																		</div>
-																		<!--end::Input group-->
+																		<!--end::Menu sub-->
 																	</div>
-																	<!--end::Scroll-->
-																	<!--begin::Actions-->
-																	<div class="text-center pt-10">
-																		<button type="reset" class="btn btn-light me-3" data-kt-users-modal-action="cancel">Discard</button>
-																		<button id="create_user_m" type="submit" class="btn btn-primary" data-kt-users-modal-action="submit">
-																			<span class="indicator-label">Submit</span>
-																			<span class="indicator-progress">Please wait... 
-																			<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-																		</button>
+																	<!--end::Menu item-->
+																	<!--begin::Menu item-->
+																	<div class="menu-item px-3 my-1">
+																		<a href="#" class="menu-link px-3">Settings</a>
 																	</div>
-																	<!--end::Actions-->
-																</form>
-																<!--end::Form-->
+																	<!--end::Menu item-->
+																</div>
+																<!--end::Menu 3-->
 															</div>
-															<!--end::Modal body-->
+															<!--end::Menu-->
 														</div>
-														<!--end::Modal content-->
+														<!--end::Actions-->
 													</div>
-													<!--end::Modal dialog-->
-												</div>
-												<!--end::Modal - Add task-->
-                                                <!--begin::Modal - Update user details-->
-                                                <div class="modal fade" id="kt_modal_update_details" tabindex="-1" aria-hidden="true">
-                                                    <!--begin::Modal dialog-->
-                                                    <div class="modal-dialog modal-dialog-centered mw-650px">
-                                                        <!--begin::Modal content-->
-                                                        <div class="modal-content">
-                                                            <!--begin::Form-->
-                                                            <form class="form" action="#" id="kt_modal_update_user_form">
-                                                                <!--begin::Modal header-->
-                                                                <div class="modal-header" id="kt_modal_update_user_header">
-                                                                    <!--begin::Modal title-->
-                                                                    <h2 class="fw-bold">Update User Details</h2>
-                                                                    <!--end::Modal title-->
-                                                                    <!--begin::Close-->
-                                                                    <div class="btn btn-icon btn-sm btn-active-icon-primary" data-kt-users-modal-action="close">
-                                                                        <i class="ki-duotone ki-cross fs-1">
-                                                                            <span class="path1"></span>
-                                                                            <span class="path2"></span>
-                                                                        </i>
-                                                                    </div>
-                                                                    <!--end::Close-->
-                                                                </div>
-                                                                <!--end::Modal header-->
-                                                                <!--begin::Modal body-->
-                                                                <div class="modal-body py-10 px-lg-17">
-                                                                    <!--begin::Scroll-->
-                                                                    <div class="d-flex flex-column scroll-y me-n7 pe-7" id="kt_modal_update_user_scroll" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_update_user_header" data-kt-scroll-wrappers="#kt_modal_update_user_scroll" data-kt-scroll-offset="300px">
-                                                                        <!--begin::User toggle-->
-                                                                        <div class="fw-bolder fs-3 rotate collapsible mb-7" data-bs-toggle="collapse" href="#kt_modal_update_user_user_info" role="button" aria-expanded="false" aria-controls="kt_modal_update_user_user_info">User Information 
-                                                                        <span class="ms-2 rotate-180">
-                                                                            <i class="ki-duotone ki-down fs-3"></i>
-                                                                        </span></div>
-                                                                        <!--end::User toggle-->
-                                                                        <!--begin::User form-->
-                                                                        <div id="kt_modal_update_user_user_info" class="collapse show">
-                                                                            <!--begin::Input group-->
-                                                                            <div class="mb-7">
-                                                                                <!--begin::Label-->
-                                                                                <label class="fs-6 fw-semibold mb-2">
-                                                                                    <span>Update Avatar</span>
-                                                                                    <span class="ms-1" data-bs-toggle="tooltip" title="Allowed file types: png, jpg, jpeg.">
-                                                                                        <i class="ki-duotone ki-information fs-7">
-                                                                                            <span class="path1"></span>
-                                                                                            <span class="path2"></span>
-                                                                                            <span class="path3"></span>
-                                                                                        </i>
-                                                                                    </span>
-                                                                                </label>
-                                                                                <!--end::Label-->
-                                                                                <!--begin::Image input wrapper-->
-                                                                                <div class="mt-1">
-                                                                                    <!--begin::Image placeholder-->
-                                                                                    <style>.image-input-placeholder { background-image: url(''); } [data-bs-theme="dark"] .image-input-placeholder { background-image: url('assets/media/svg/avatars/blank-dark.svg'); }</style>
-                                                                                    <!--end::Image placeholder-->
-                                                                                    <!--begin::Image input-->
-                                                                                    <div class="image-input image-input-outline image-input-placeholder" data-kt-image-input="true">
-                                                                                        <!--begin::Preview existing avatar-->
-                                                                                        <div class="image-input-wrapper w-125px h-125px" style="background-image: url(assets/media/avatars/300-6.jpg"></div>
-                                                                                        <!--end::Preview existing avatar-->
-                                                                                        <!--begin::Edit-->
-                                                                                        <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
-                                                                                            <i class="ki-duotone ki-pencil fs-7">
-                                                                                                <span class="path1"></span>
-                                                                                                <span class="path2"></span>
-                                                                                            </i>
-                                                                                            <!--begin::Inputs-->
-                                                                                            <input id="e_avatar" type="file" name="avatar" accept=".png, .jpg, .jpeg" />
-                                                                                            <input type="hidden" name="avatar_remove" />
-                                                                                            <!--end::Inputs-->
-                                                                                        </label>
-                                                                                        <!--end::Edit-->
-                                                                                        <!--begin::Cancel-->
-                                                                                        <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
-                                                                                            <i class="ki-duotone ki-cross fs-2">
-                                                                                                <span class="path1"></span>
-                                                                                                <span class="path2"></span>
-                                                                                            </i>
-                                                                                        </span>
-                                                                                        <!--end::Cancel-->
-                                                                                        <!--begin::Remove-->
-                                                                                        <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
-                                                                                            <i class="ki-duotone ki-cross fs-2">
-                                                                                                <span class="path1"></span>
-                                                                                                <span class="path2"></span>
-                                                                                            </i>
-                                                                                        </span>
-                                                                                        <!--end::Remove-->
-                                                                                    </div>
-                                                                                    <!--end::Image input-->
-                                                                                </div>
-                                                                                <!--end::Image input wrapper-->
-                                                                            </div>
-                                                                            <!--end::Input group-->
-                                                                            <!--begin::Input group-->
-                                                                            <div class="fv-row mb-7">
-                                                                                <!--begin::Label-->
-                                                                                <label class="fs-6 fw-semibold mb-2">Name</label>
-                                                                                <!--end::Label-->
-                                                                                <!--begin::Input-->
-                                                                                <input id="e_username" type="text" class="form-control form-control-solid" placeholder="" name="name" value="" />
-                                                                                <!--end::Input-->
-                                                                            </div>
-                                                                            <div class="fv-row mb-7">
-                                                                                <!--begin::Label-->
-                                                                                <label class="fs-6 fw-semibold mb-2">userId</label>
-                                                                                <!--end::Label-->
-                                                                                <!--begin::Input-->
-                                                                                <input id="e_id" type="text" class="form-control form-control-solid" placeholder="" name="name" value="" />
-                                                                                <!--end::Input-->
-                                                                            </div>
-                                                                            <div class="fv-row mb-7">
-                                                                                <!--begin::Label-->
-                                                                                <label class="fs-6 fw-semibold mb-2">role_id</label>
-                                                                                <!--end::Label-->
-                                                                                <!--begin::Input-->
-                                                                                <input id="e_role_id" type="text" class="form-control form-control-solid" placeholder="" name="name" value="" />
-                                                                                <!--end::Input-->
-                                                                            </div>
-                                                                            <!--end::Input group-->
-                                                                            <!--begin::Input group-->
-                                                                            <div class="fv-row mb-7">
-                                                                                <!--begin::Label-->
-                                                                                <label class="fs-6 fw-semibold mb-2">
-                                                                                    <span>Email</span>
-                                                                                    <span class="ms-1" data-bs-toggle="tooltip" title="Email address must be active">
-                                                                                        <i class="ki-duotone ki-information fs-7">
-                                                                                            <span class="path1"></span>
-                                                                                            <span class="path2"></span>
-                                                                                            <span class="path3"></span>
-                                                                                        </i>
-                                                                                    </span>
-                                                                                </label>
-                                                                                <!--end::Label-->
-                                                                                <!--begin::Input-->
-                                                                                <input id="e_email" type="email" class="form-control form-control-solid" placeholder="" name="email" value="" />
-                                                                                <!--end::Input-->
-                                                                            </div>
-                                                                            <!--end::Input group-->
-                                                                            
-                                                                            
-                                                                        </div>
-                                                                        <!--end::User form-->
-                                                                    </div>
-                                                                    <!--end::Scroll-->
-                                                                </div>
-                                                                <!--end::Modal body-->
-                                                                <!--begin::Modal footer-->
-                                                                <div class="modal-footer flex-center">
-                                                                    <!--begin::Button-->
-                                                                    <button type="reset" class="btn btn-light me-3" data-kt-users-modal-action="cancel">Discard</button>
-                                                                    <!--end::Button-->
-                                                                    <!--begin::Button-->
-                                                                    <button id="e_edit" type="submit" class="btn btn-primary" data-kt-users-modal-action="submit">
-                                                                        <span class="indicator-label">Submit</span>
-                                                                        <span class="indicator-progress">Please wait... 
-                                                                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-                                                                    </button>
-                                                                    <!--end::Button-->
-                                                                </div>
-                                                                <!--end::Modal footer-->
-                                                            </form>
-                                                            <!--end::Form-->
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!--end::Modal - Update user details-->
-											</div>
-											<!--end::Card toolbar-->
-										</div>
-										<!--end::Card header-->
-										<!--begin::Card body-->
-										<div class="card-body py-4">
-											<!--begin::Table-->
-											<table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_users">
-												<thead>
-													<tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
-														<th class="w-10px pe-2">
-															<div class="form-check form-check-sm form-check-custom form-check-solid me-3">
-																<input class="form-check-input" type="checkbox" data-kt-check="true" data-kt-check-target="#kt_table_users .form-check-input" value="1" />
+													<!--end::Title-->
+													<!--begin::Stats-->
+													<div class="d-flex flex-wrap flex-stack">
+														<!--begin::Wrapper-->
+														<div class="d-flex flex-column flex-grow-1 pe-8">
+															<!--begin::Stats-->
+															<div class="d-flex flex-wrap">
+																<!--begin::Stat-->
+																<div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
+																	<!--begin::Number-->
+																	<div class="d-flex align-items-center">
+																		<i class="ki-duotone ki-arrow-up fs-3 text-success me-2">
+																			<span class="path1"></span>
+																			<span class="path2"></span>
+																		</i>
+																		<div class="fs-2 fw-bold" data-kt-countup="true" data-kt-countup-value="4500" data-kt-countup-prefix="$">0</div>
+																	</div>
+																	<!--end::Number-->
+																	<!--begin::Label-->
+																	<div class="fw-semibold fs-6 text-gray-500">Earnings</div>
+																	<!--end::Label-->
+																</div>
+																<!--end::Stat-->
+																<!--begin::Stat-->
+																<div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
+																	<!--begin::Number-->
+																	<div class="d-flex align-items-center">
+																		<i class="ki-duotone ki-arrow-down fs-3 text-danger me-2">
+																			<span class="path1"></span>
+																			<span class="path2"></span>
+																		</i>
+																		<div class="fs-2 fw-bold" data-kt-countup="true" data-kt-countup-value="80">0</div>
+																	</div>
+																	<!--end::Number-->
+																	<!--begin::Label-->
+																	<div class="fw-semibold fs-6 text-gray-500">Projects</div>
+																	<!--end::Label-->
+																</div>
+																<!--end::Stat-->
+																<!--begin::Stat-->
+																<div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
+																	<!--begin::Number-->
+																	<div class="d-flex align-items-center">
+																		<i class="ki-duotone ki-arrow-up fs-3 text-success me-2">
+																			<span class="path1"></span>
+																			<span class="path2"></span>
+																		</i>
+																		<div class="fs-2 fw-bold" data-kt-countup="true" data-kt-countup-value="60" data-kt-countup-prefix="%">0</div>
+																	</div>
+																	<!--end::Number-->
+																	<!--begin::Label-->
+																	<div class="fw-semibold fs-6 text-gray-500">Success Rate</div>
+																	<!--end::Label-->
+																</div>
+																<!--end::Stat-->
 															</div>
-														</th>
-														<th class="min-w-125px">User Id</th>
-														<th class="min-w-125px">User</th>
-														<th class="min-w-125px">Role</th>
-														<th class="min-w-125px">User Email</th>
-														<th class="min-w-125px">Joined Date</th>
-														<th class="text-end min-w-100px">Actions</th>
-													</tr>
-												</thead>
-												<tbody class="text-gray-600 fw-semibold">
-                                                    <?php if (!empty($users) && is_array($users)): ?>
-                                                        <?php foreach ($users[0] as $user): ?>
-                                                            <?php if (is_array($user)): // Ensure $user is an array ?>
-                                                                <tr>
-                                                                    <td>
-                                                                        <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                                                            <input class="form-check-input" type="checkbox" value="1" />
-                                                                        </div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <?php echo htmlspecialchars($user['id']); ?>
-                                                                    </td>
-                                                                    <td class="d-flex align-items-center">
-                                                                        <!--begin:: Avatar -->
-                                                                        <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
-                                                                            <a href="">
-                                                                                <div class="symbol-label">
-																					<img src="<?php echo htmlspecialchars('http://localhost:3000/uploads/' . $user['avatar']); ?>" alt="Avatar" class="w-100" />
-                                                                                </div>
-                                                                            </a>
-                                                                        </div>
-                                                                        <!--end::Avatar-->
-                                                                        <!--begin::User details-->
-                                                                        <div class="d-flex flex-column">
-                                                                            <a href="user-management/users/view.php?id=<?php echo htmlspecialchars($user['id']); ?>" class="text-gray-800 text-hover-primary mb-1"><?php echo htmlspecialchars($user['username']); ?></a>
-                                                                            
-                                                                        </div>
-                                                                        <!--begin::User details-->
-                                                                    </td>
-                                                                    <td>
-                                                                        <?php 
-                                                                            echo htmlspecialchars($user['role_name']); 
-                                                                        ?>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="badge badge-light fw-bold"><?php echo htmlspecialchars($user['email']); ?></div>
-                                                                    </td>
-                                                                    
-                                                                    <td><?php echo htmlspecialchars($user['created_at']); ?></td>
-                                                                    <td class="text-end">
-                                                                        <a href="#" class="btn btn-light btn-active-light-primary btn-flex btn-center btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions 
-                                                                        <i class="ki-duotone ki-down fs-5 ms-1"></i></a>
-                                                                        <!--begin::Menu-->
-                                                                        <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4" data-kt-menu="true">
-                                                                            <!--begin::Menu item-->
-                                                                            <div class="menu-item px-3">
-                                                                                <a id="editUserbutton" href="#" class="menu-link px-3" data-bs-toggle="modal" data-bs-target="#kt_modal_update_details" data-user-id="<?php echo htmlspecialchars($user['id']); ?>">Edit</a>
-                                                                            </div>
-                                                                            <!--end::Menu item-->
-                                                                            <!--begin::Menu item-->
-                                                                            <div class="menu-item px-3">
-                                                                                <a href="#" class="menu-link px-3 deleteUserButton" data-kt-users-table-filter="delete_row" data-user-id="<?php echo htmlspecialchars($user['id']); ?>">Delete</a>
-                                                                            </div>
-                                                                            <!--end::Menu item-->
-                                                                        </div>
-                                                                        <!--end::Menu-->
-                                                                    </td>
-													            </tr>
-                                                            <?php endif; ?>
-                                                        <?php endforeach; ?>
-                                                    <?php else: ?>
-                                                        <tr>
-                                                            <td colspan="7" class="text-center">No users found.</td>
-                                                        </tr>
-                                                    <?php endif; ?>
-                                                </tbody>
-											</table>
-											<!--end::Table-->
+															<!--end::Stats-->
+														</div>
+														<!--end::Wrapper-->
+														<!--begin::Progress-->
+														<div class="d-flex align-items-center w-200px w-sm-300px flex-column mt-3">
+															<div class="d-flex justify-content-between w-100 mt-auto mb-2">
+																<span class="fw-semibold fs-6 text-gray-500">Profile Compleation</span>
+																<span class="fw-bold fs-6">50%</span>
+															</div>
+															<div class="h-5px mx-3 w-100 bg-light mb-3">
+																<div class="bg-success rounded h-5px" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+															</div>
+														</div>
+														<!--end::Progress-->
+													</div>
+													<!--end::Stats-->
+												</div>
+												<!--end::Info-->
+											</div>
+											<!--end::Details-->
+											<!--begin::Navs-->
+											<ul class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-5 fw-bold">
+												<!--begin::Nav item-->
+												<li class="nav-item mt-2">
+													<a class="nav-link text-active-primary ms-0 me-10 py-5 active" href="account/overview.html">Overview</a>
+												</li>
+												<!--end::Nav item-->
+												<!--begin::Nav item-->
+												<li class="nav-item mt-2">
+													<a class="nav-link text-active-primary ms-0 me-10 py-5" href="user-management/users/setting.php?id=<?php echo($users['id']);?>">Settings</a>
+												</li>
+												<!--end::Nav item-->
+												<!--begin::Nav item-->
+												<li class="nav-item mt-2">
+													<a class="nav-link text-active-primary ms-0 me-10 py-5" href="account/security.html">Security</a>
+												</li>
+												<!--end::Nav item-->
+												<!--begin::Nav item-->
+												<li class="nav-item mt-2">
+													<a class="nav-link text-active-primary ms-0 me-10 py-5" href="account/activity.html">Activity</a>
+												</li>
+												<!--end::Nav item-->
+												<!--begin::Nav item-->
+												<li class="nav-item mt-2">
+													<a class="nav-link text-active-primary ms-0 me-10 py-5" href="account/billing.html">Billing</a>
+												</li>
+												<!--end::Nav item-->
+												<!--begin::Nav item-->
+												<li class="nav-item mt-2">
+													<a class="nav-link text-active-primary ms-0 me-10 py-5" href="account/statements.html">Statements</a>
+												</li>
+												<!--end::Nav item-->
+												<!--begin::Nav item-->
+												<li class="nav-item mt-2">
+													<a class="nav-link text-active-primary ms-0 me-10 py-5" href="account/referrals.html">Referrals</a>
+												</li>
+												<!--end::Nav item-->
+												<!--begin::Nav item-->
+												<li class="nav-item mt-2">
+													<a class="nav-link text-active-primary ms-0 me-10 py-5" href="account/api-keys.html">API Keys</a>
+												</li>
+												<!--end::Nav item-->
+												<!--begin::Nav item-->
+												<li class="nav-item mt-2">
+													<a class="nav-link text-active-primary ms-0 me-10 py-5" href="account/logs.html">Logs</a>
+												</li>
+												<!--end::Nav item-->
+											</ul>
+											<!--begin::Navs-->
+										</div>
+									</div>
+									<!--end::Navbar-->
+									<!--begin::details View-->
+									<div class="card mb-5 mb-xl-10" id="kt_profile_details_view">
+										<!--begin::Card header-->
+										<div class="card-header cursor-pointer">
+											<!--begin::Card title-->
+											<div class="card-title m-0">
+												<h3 class="fw-bold m-0">Profile Details</h3>
+											</div>
+											<!--end::Card title-->
+											<!--begin::Action-->
+											<a href="user-management/users/setting.php?id=<?php echo($users['id']);?>" class="btn btn-sm btn-primary align-self-center">Edit Profile</a>
+											<!--end::Action-->
+										</div>
+										<!--begin::Card header-->
+										<!--begin::Card body-->
+										<div class="card-body p-9">
+											<!--begin::Row-->
+											<div class="row mb-7">
+												<!--begin::Label-->
+												<label class="col-lg-4 fw-semibold text-muted">Full Name</label>
+												<!--end::Label-->
+												<!--begin::Col-->
+												<div class="col-lg-8">
+													<span class="fw-bold fs-6 text-gray-800"><?php echo($users['username']);?></span>
+												</div>
+												<!--end::Col-->
+											</div>
+											<!--end::Row-->
+											<!--begin::Input group-->
+											<div class="row mb-7">
+												<!--begin::Label-->
+												<label class="col-lg-4 fw-semibold text-muted">Company</label>
+												<!--end::Label-->
+												<!--begin::Col-->
+												<div class="col-lg-8 fv-row">
+													<span class="fw-semibold text-gray-800 fs-6"><?php echo($users['company']);?></span>
+												</div>
+												<!--end::Col-->
+											</div>
+											<!--end::Input group-->
+											<!--begin::Input group-->
+											<div class="row mb-7">
+												<!--begin::Label-->
+												<label class="col-lg-4 fw-semibold text-muted">Contact Phone 
+												<span class="ms-1" data-bs-toggle="tooltip" title="Phone number must be active">
+													<i class="ki-duotone ki-information fs-7">
+														<span class="path1"></span>
+														<span class="path2"></span>
+														<span class="path3"></span>
+													</i>
+												</span></label>
+												<!--end::Label-->
+												<!--begin::Col-->
+												<div class="col-lg-8 d-flex align-items-center">
+													<span class="fw-bold fs-6 text-gray-800 me-2"><?php echo($users['contact_phone']);?></span>
+													<span class="badge badge-success">Verified</span>
+												</div>
+												<!--end::Col-->
+											</div>
+											<!--end::Input group-->
+											<!--begin::Input group-->
+											<div class="row mb-7">
+												<!--begin::Label-->
+												<label class="col-lg-4 fw-semibold text-muted">Company Site</label>
+												<!--end::Label-->
+												<!--begin::Col-->
+												<div class="col-lg-8">
+													<a href="#" class="fw-semibold fs-6 text-gray-800 text-hover-primary"><?php echo($users['company_site']);?></a>
+												</div>
+												<!--end::Col-->
+											</div>
+											<!--end::Input group-->
+											<!--begin::Input group-->
+											<div class="row mb-7">
+												<!--begin::Label-->
+												<label class="col-lg-4 fw-semibold text-muted">Country 
+												<span class="ms-1" data-bs-toggle="tooltip" title="Country of origination">
+													<i class="ki-duotone ki-information fs-7">
+														<span class="path1"></span>
+														<span class="path2"></span>
+														<span class="path3"></span>
+													</i>
+												</span></label>
+												<!--end::Label-->
+												<!--begin::Col-->
+												<div class="col-lg-8">
+													<span class="fw-bold fs-6 text-gray-800"><?php echo($users['country']);?></span>
+												</div>
+												<!--end::Col-->
+											</div>
+											<!--end::Input group-->
+											<!--begin::Input group-->
+											<div class="row mb-7">
+												<!--begin::Label-->
+												<label class="col-lg-4 fw-semibold text-muted">Communication</label>
+												<!--end::Label-->
+												<!--begin::Col-->
+												<div class="col-lg-8">
+													<span class="fw-bold fs-6 text-gray-800"><?php echo($users['communication']);?></span>
+												</div>
+												<!--end::Col-->
+											</div>
+											<!--end::Input group-->
+											<!--begin::Input group-->
+											<div class="row mb-10">
+												<!--begin::Label-->
+												<label class="col-lg-4 fw-semibold text-muted">Allow Changes</label>
+												<!--begin::Label-->
+												<!--begin::Label-->
+												<div class="col-lg-8">
+													<span class="fw-semibold fs-6 text-gray-800">Yes</span>
+												</div>
+												<!--begin::Label-->
+											</div>
+											<!--end::Input group-->
+											<!--begin::Notice-->
+											<div class="notice d-flex bg-light-warning rounded border-warning border border-dashed p-6">
+												<!--begin::Icon-->
+												<i class="ki-duotone ki-information fs-2tx text-warning me-4">
+													<span class="path1"></span>
+													<span class="path2"></span>
+													<span class="path3"></span>
+												</i>
+												<!--end::Icon-->
+												<!--begin::Wrapper-->
+												<div class="d-flex flex-stack flex-grow-1">
+													<!--begin::Content-->
+													<div class="fw-semibold">
+														<h4 class="text-gray-900 fw-bold">We need your attention!</h4>
+														<div class="fs-6 text-gray-700">Your payment was declined. To start using tools, please 
+														<a class="fw-bold" href="account/billing.html">Add Payment Method</a>.</div>
+													</div>
+													<!--end::Content-->
+												</div>
+												<!--end::Wrapper-->
+											</div>
+											<!--end::Notice-->
 										</div>
 										<!--end::Card body-->
 									</div>
-									<!--end::Card-->
+									<!--end::details View-->
 								</div>
 								<!--end::Content container-->
 							</div>
@@ -5960,7 +5796,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 							<!--end::Footer container-->
 						</div>
 						<!--end::Footer-->
-					</div>
+                    </div>
 					<!--end:::Main-->
 				</div>
 				<!--end::Wrapper-->
@@ -10501,57 +10337,38 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 		<script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
 		<!--end::Vendors Javascript-->
 		<!--begin::Custom Javascript(used for this page only)-->
-        <script src="assets/js/custom/apps/user-management/users/view/view.js"></script>
-		<script src="assets/js/custom/apps/user-management/users/view/update-details.js"></script>
-		<script src="assets/js/custom/apps/user-management/users/list/table.js"></script>
-		<script src="assets/js/custom/apps/user-management/users/list/export-users.js"></script>
-		<script src="assets/js/custom/apps/user-management/users/list/add.js"></script>
+		<script src="assets/js/custom/apps/user-management/permissions/list.js"></script>
+		<script src="assets/js/custom/apps/user-management/permissions/add-permission.js"></script>
+		<script src="assets/js/custom/apps/user-management/permissions/update-permission.js"></script>
 		<script src="assets/js/widgets.bundle.js"></script>
 		<script src="assets/js/custom/widgets.js"></script>
 		<script src="assets/js/custom/apps/chat/chat.js"></script>
 		<script src="assets/js/custom/utilities/modals/upgrade-plan.js"></script>
 		<script src="assets/js/custom/utilities/modals/create-app.js"></script>
 		<script src="assets/js/custom/utilities/modals/users-search.js"></script>
-		<script src="js/script.js"></script>
+        
 		<!--end::Custom Javascript-->
 		<!--end::Javascript-->
-		
-		<script src="js/script.js"></script>
         <script>
-			document.getElementById('create_user_m').addEventListener('click', function() {
-				const username = document.getElementById('username').value;
-				const email = document.getElementById('email').value;
-				const password = document.getElementById('password').value;
-				const roleId = document.querySelector('input[name="user_role"]:checked').value;
-				const avatar = document.getElementById('avatar').files[0];
+            document.getElementById('create_permission').addEventListener('click', function() {
+                
+                async function createUser() {
+                    try {
+                        const response = await fetch('http://localhost:3000/users/create', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ username, email, password, roleId, avatar}),
+                        });
 
-				const formData = new FormData();
-				formData.append('username', username);
-				formData.append('email', email);
-				formData.append('password', password);
-				formData.append('roleId', roleId);
-				formData.append('avatar', avatar);
-				console.log(roleId);
-				
-				async function createUser() {
-					try {
-						const response = await fetch('http://localhost:3000/users/create', {
-							method: 'POST',
-							body: formData, // No need for Content-Type header
-						});
-
-						if (!response.ok) {
-							throw new Error('Failed to create user');
-						}
-						const data = await response.json();
-						console.log('User created:', data);
-					} catch (error) {
-						console.error('Error during user creation:', error);
-						alert('An error occurred while processing your request.');
-					}
-				}   
-				createUser();
-			});
+                    } catch (error) {
+                        console.error('Error during login:', error);
+                        alert('An error occurred while processing your request.'); // Generic error message
+                    }
+                }   
+                createUser();
+            });
 
             document.querySelectorAll('.deleteUserButton').forEach(button => {
                 button.addEventListener('click', function(event) {
@@ -10620,21 +10437,20 @@ if (json_last_error() !== JSON_ERROR_NONE) {
                 const e_username = document.getElementById('e_username').value;
                 const e_email = document.getElementById('e_email').value;
                 const e_role_id = document.getElementById('e_role_id').value;
-                const e_avatar = document.getElementById('e_avatar').files[0];
-
-				const formData = new FormData();
-				formData.append('id', e_id);
-				formData.append('username', e_username);
-				formData.append('email', e_email);
-				formData.append('roleId', e_role_id);
-				formData.append('avatar', e_avatar);
-
-				console.log(e_avatar);
-				
+                const updatedUserData = {
+                    id: e_id,
+                    username: e_username,
+                    email: e_email,
+                    roleId: e_role_id
+                };
+                console.log(updatedUserData);
                 
                 fetch(`http://localhost:3000/users/${e_id}`, {
                     method: 'PUT', // Use 'PATCH' if you want to update only specific fields
-                    body: formData, // Convert the data to JSON
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedUserData) // Convert the data to JSON
                 })
                 
             })
